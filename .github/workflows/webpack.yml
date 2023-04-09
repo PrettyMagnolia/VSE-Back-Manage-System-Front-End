@@ -36,7 +36,6 @@ jobs:
         REMOTE_USER: root
         # content of ssh private key. ex raw content of ~/.ssh/id_rsa
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALI }}
-        # connection timeout to remote host
         # source to copy
         SOURCE: "dist/"
         # destination for copy
