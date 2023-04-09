@@ -1,0 +1,47 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Build
+      run: |
+        npm install
+        npx run build:pro
+    
+    - name: scp-pipeline
+      uses: cross-the-world/scp-pipeline@v1.2.1
+      with:
+        # ssh remote host
+        host: 139.196.226.104
+        # ssh remote user
+        user: root
+        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
+        key: ${{ secrets.SSH_PRIVATE_KEY_ALI }}
+        # ssh remote password
+        pass: ${{ secrets.SERVER_PASS }}
+        # connection timeout to remote host
+        # source to copy
+        local: dist/
+        # destination for copy
+        remote: /var/www/ves
+        
+        
