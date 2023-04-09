@@ -27,21 +27,19 @@ jobs:
         npm install
         npm run build:pro
     
-    - name: scp-pipeline
-      uses: cross-the-world/scp-pipeline@v1.2.1
+    - name: ssh-deploy
+      uses: easingthemes/ssh-deploy@v4.1.8
       with:
         # ssh remote host
-        host: 139.196.226.104
+        REMOTE_HOST: 139.196.226.104
         # ssh remote user
-        user: root
+        REMOTE_USER: root
         # content of ssh private key. ex raw content of ~/.ssh/id_rsa
-        key: ${{ secrets.SSH_PRIVATE_KEY_ALI }}
-        # ssh remote password
-        pass: ${{ secrets.SERVER_PASS }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALI }}
         # connection timeout to remote host
         # source to copy
-        local: dist/
+        SOURCE: "dist/"
         # destination for copy
-        remote: /var/www/ves
+        TARGET: "/var/www/ves"
         
         
