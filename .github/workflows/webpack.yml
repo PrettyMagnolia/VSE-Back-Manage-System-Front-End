@@ -29,13 +29,14 @@ jobs:
     
     - name: ssh-deploy
       uses: easingthemes/ssh-deploy@v4.1.8
-      with:
-        # ssh remote host
-        REMOTE_HOST: 139.196.226.104
-        # ssh remote user
-        REMOTE_USER: root
-        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
+      env:
+        # private key
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_ALI }}
+        # ssh remote host
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        # ssh remote user
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        # content of ssh private key. ex raw content of ~/.ssh/id_rsa
         # source to copy
         SOURCE: "dist/"
         # destination for copy
