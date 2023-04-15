@@ -2,9 +2,11 @@
   <div class="card review-content-main">
     <el-row justify="start" align="middle" class="header">
       <el-col :span="7">
-        <el-select v-model="currentExpId" placeholder="请选择实验项目" value-key="experimentId" @change="changeCurrentExperiment"
+        <el-select
+          v-model="currentExpId" placeholder="请选择实验项目" value-key="experimentId" @change="changeCurrentExperiment"
           style="width:300px;">
-          <el-option v-for="item in experimentList" :key="item.experimentId" :label="item.experimentName"
+          <el-option
+            v-for="item in experimentList" :key="item.experimentId" :label="item.experimentName"
             :value="item.experimentId">
             <span style="float: left">{{ item.experimentName }}</span>
             <span style=" float: right;color: var(--el-text-color-secondary);font-size: 13px;">
@@ -31,11 +33,11 @@
         <span class="small-grey">{{ currentExpIndex == undefined ? '--' : currentExperiment?.score }}</span>
       </el-col>
     </el-row>
-    <div style="height: 10px;"></div>
+    <div style="height: 10px;" />
     <el-table :data="tableData" v-if="tableData != undefined" height="500" class="table" @row-click="handleRowClick">
-      <el-table-column prop="schoolNumber" label="学号" width="100"></el-table-column>
-      <el-table-column fixed prop="stuName" label="姓名" width="100"></el-table-column>
-      <el-table-column prop="submitTime" label="最近提交时间" width="200"></el-table-column>
+      <el-table-column prop="schoolNumber" label="学号" width="100" />
+      <el-table-column fixed prop="stuName" label="姓名" width="100" />
+      <el-table-column prop="submitTime" label="最近提交时间" width="200" />
       <el-table-column prop="reportUrl" label="实验报告" width="300">
         <template #default="scope">
           <span v-if="scope.row.reportUrl == undefined">未提交</span>
@@ -49,15 +51,16 @@
           </el-space>
         </template>
       </el-table-column>
-      <el-table-column prop="reviewTime" label="最近批阅时间" width="200"></el-table-column>
-      <el-table-column prop="score" label="得分" width="100"></el-table-column>
+      <el-table-column prop="reviewTime" label="最近批阅时间" width="200" />
+      <el-table-column prop="score" label="得分" width="100" />
 
       <el-table-column fixed="right" prop="score" label="评阅" width="200">
         <template #default="scope">
 
           <span v-if="scope.row.stuId == currentRow?.stuId && scope.row.reportId != undefined">
             <el-space wrap>
-              <el-input size="small" type="number" step="0.01" :max="currentExperiment?.score" class="score-input"
+              <el-input
+                size="small" type="number" step="0.01" :max="currentExperiment?.score" class="score-input"
                 v-model="score">
                 {{ scope.row.score }}
               </el-input>
@@ -94,14 +97,13 @@
 <script setup lang="ts" name="review">
 import { getCourseExperiments, getStudnetSubmit, giveReportScore } from '@/api/modules/review';
 import { Review } from '@/api/interface';
-import { reactive, ref, onMounted, computed, Ref } from 'vue';
+import { reactive, ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { currentTimeState } from '@/utils/util';
 import { ElMessage } from 'element-plus';
 const router = useRouter();
 const routerName = router.currentRoute.value.name!.valueOf();
 const courseId = (routerName as string)!.split('-')[0]
-
 
 const currentExpId = ref<number>()
 let experimentList = ref<Review.Experiment[]>([])
@@ -114,7 +116,6 @@ onMounted(async () => {
   const { data: temp } = await getCourseExperiments({ courseId: courseId });
   experimentList.value = temp;
 })
-
 
 interface expStuSub {
   experimentId: number,
@@ -142,10 +143,9 @@ const tableData = computed(() => {
 })
 
 const currentRow = ref<Review.StudentSubmit>()
-const handleRowClick = (row: Review.StudentSubmit, column: any, ecvent: any) => {
+const handleRowClick = (row: Review.StudentSubmit) => {
   currentRow.value = row;
 }
-
 
 const score = ref<number>()
 // 打分
@@ -176,7 +176,6 @@ const reportIsUpdate = (submitTime: string | undefined, reivewTime: string | und
   if (sub.getTime() < rev.getTime()) return false;
   else return true;
 }
-
 
 // 预览实验报告,实验报告名
 const getReportName = (reportUrl: string | undefined) => {

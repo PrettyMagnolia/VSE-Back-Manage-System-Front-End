@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/v-on-event-hyphenation -->
 <template>
   <div class="card self-content-box">
     <div class="left-main-content">
@@ -22,7 +23,8 @@
           </el-descriptions>
         </el-col>
         <el-col align="middle" :span="10">
-          <UploadImg v-if="isChanging" v-model:imageUrl="avatar2" @update:imageUrl="updateAvatar" :drag="false"
+          <UploadImg
+            v-if="isChanging" v-model:imageUrl="avatar2" @update:imageUrl="updateAvatar" :drag="false"
             borderRadius="50%">
             <template #empty>
               <el-icon>
@@ -33,7 +35,7 @@
             <template #tip> 圆形组件（禁止拖拽上传） </template>
           </UploadImg>
           <span v-else>
-            <el-avatar :size="100" :src="userInfo.avatar"></el-avatar>
+            <el-avatar :size="100" :src="userInfo.avatar" />
             <p>{{ userInfo.name }}</p>
           </span>
           <el-button @click="changeAvater">修改头像</el-button>

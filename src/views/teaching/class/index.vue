@@ -23,7 +23,7 @@
 
       <el-col :span="11">
         <div>
-          <div ref="echartsRef" class="content-box"></div>
+          <div ref="echartsRef" class="content-box" />
         </div>
       </el-col>
     </el-row>
@@ -33,7 +33,7 @@
 <script setup lang="ts" name="class">
 import { Review } from '@/api/interface';
 import { getCourseInfo, getStudentList } from '@/api/modules/review';
-import { computed, onBeforeMount, onMounted, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import * as echarts from "echarts";
 import { useEcharts } from "@/hooks/useEcharts";
@@ -50,9 +50,7 @@ const getNetworkData = async () => {
   const { data: temp } = await getStudentList({ courseId: Number(courseId) });
   stuList.value = temp
   console.log(temp);
-
 }
-
 
 onMounted(async () => {
   await getNetworkData();
@@ -114,10 +112,9 @@ onMounted(async () => {
   console.log(option);
 });
 
-
 const semester = computed(() => {
   if (course.value?.semester == 'spring') return "秋季学期";
-  if (course.value?.semester == 'autumn') return "春季学期"
+  else return "春季学期";
 })
 </script>
 

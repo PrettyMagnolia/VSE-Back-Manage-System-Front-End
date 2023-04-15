@@ -15,7 +15,4 @@ html
 .eslintrc.js
 .prettierrc.js
 /src/mock/*
-.vue
-/src/views/teaching
-/src/views/userinfo
 
