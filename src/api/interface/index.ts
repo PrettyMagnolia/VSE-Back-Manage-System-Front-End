@@ -107,7 +107,18 @@ export namespace User {
 
 export namespace Experiment {
 	export interface ExperimentList {
-		experimentId: string;
+		experimentId: number;
 		experimentName: string;
+		instructor: string;
+		template: string;
+	}
+	export interface CourseExperimentList {
+		experimentId: number;
+		experimentName: string;
+		instructor: string;
+		template: string;
+		score: number;
+		startTime: Date;
+		endTime: Date;
 	}
 }
