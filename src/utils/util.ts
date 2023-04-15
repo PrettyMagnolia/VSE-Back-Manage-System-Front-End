@@ -308,3 +308,21 @@ export function filterEnum(
 	if (type == "tag") return filterData?.tagType ? filterData.tagType : "";
 	return filterData ? filterData[label] : "--";
 }
+
+/**
+ * @description 获取当前时间是否在某个时间段内 ，-1 => 未开始 0=> 正在进行中 1 => 已结束
+ * @param {Date} startTime 开始时间
+ * @param {Date} endTime 结束时间
+ * @returns {number} 
+*/
+export function currentTimeState(
+	startTime: Date,
+	endTime: Date
+): number {
+	const nowTimetamp = new Date().getTime();
+	const startTimetamp = startTime.getTime();
+	const endTimetamp = endTime.getTime();
+	if (nowTimetamp < startTimetamp) return -1;
+	if (nowTimetamp > endTimetamp) return 1;
+	return 0;
+}

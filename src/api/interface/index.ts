@@ -55,51 +55,44 @@ export interface ResUserInfo {
 	role: number
 }
 
-// * 用户管理模块
-export namespace User {
-	export interface ReqUserParams extends ReqPage {
-		username: string;
-		gender: number;
-		idCard: string;
-		email: string;
-		address: string;
-		createTime: string[];
-		status: number;
+// * 批阅实验报告模块
+export namespace Review {
+	export interface Experiment {
+		experimentId: number,
+		experimentName: string,
+		startTime: string,
+		endTime: string
+		score: number
 	}
-	export interface ResUserList {
-		id: string;
-		username: string;
-		gender: number;
-		user: {
-			detail: {
-				age: number;
-			};
-		};
-		idCard: string;
-		email: string;
-		address: string;
-		createTime: string;
-		status: number;
-		avatar: string;
-		photo: any[];
-		children?: ResUserList[];
+	export interface ReqExperiments {
+		courseId: string
 	}
-	export interface ResStatus {
-		userLabel: string;
-		userValue: number;
+	export interface ReqStudentSubmit {
+		courseId: string,
+		experimentId: string
 	}
-	export interface ResGender {
-		genderLabel: string;
-		genderValue: number;
+	export interface StudentSubmit {
+		reportId?: number,
+		stuId: number,
+		schoolNumber: string,
+		stuName: string,
+		submitTime?: string
+		reviewTime?: string
+		reportUrl?: string
+		score?: number
 	}
-	export interface ResDepartment {
-		id: string;
-		name: string;
-		children?: ResDepartment[];
+	export interface ReqGiveScore {
+		reportId: number,
+		score: number
 	}
-	export interface ResRole {
-		id: string;
-		name: string;
-		children?: ResDepartment[];
+	export interface ReqCourseInfo {
+		courseId: number
+	}
+	export interface CourseInfo {
+		courseId: number,
+		courseName: string,
+		semester: string,
+		year: string
 	}
 }
+
