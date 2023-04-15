@@ -103,3 +103,11 @@ export namespace User {
 		children?: ResDepartment[];
 	}
 }
+
+
+export namespace Experiment {
+	export interface ExperimentList {
+		experimentId: string;
+		experimentName: string;
+	}
+}
