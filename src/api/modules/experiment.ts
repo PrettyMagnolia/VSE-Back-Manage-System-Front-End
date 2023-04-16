@@ -10,6 +10,7 @@ export const getAllExperiments = () => {
 	return http.get<Experiment.ExperimentList[]>(PORT1 + `/allexperiment`, {}, { headers: { noLoading: true } }); // 正常 post json 请求  ==>  application/json
 };
 
+// 获取课程中的所有实验
 export const getOneCourseAllExperiments = (courseId: number) => {
 	return http.get<Experiment.CourseExperimentList[]>(PORT1 + `/experimentincourse`, {courseId}, { headers: { noLoading: true } })
 }

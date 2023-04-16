@@ -118,7 +118,7 @@ export namespace Experiment {
 		instructor: string;
 		template: string;
 		score: number;
-		startTime: Date;
-		endTime: Date;
+		startTime: string;
+		endTime: string;
 	}
 }

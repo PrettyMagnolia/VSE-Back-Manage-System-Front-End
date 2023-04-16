@@ -22,13 +22,13 @@
       <el-table-column label="实验指导书">
         <el-table-column prop="状态" label="状态">
           <template #default="scope">
-            <el-tag v-if="scope.row.instructor !== null">已上传</el-tag>
+            <el-tag v-if="scope.row.instructor != null">已上传</el-tag>
             <el-tag v-else type="info">未上传</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="操作" label="操作">
           <template #default="scope">
-            <template v-if="scope.row.instructor !== null">
+            <template v-if="scope.row.instructor != null">
               <el-button size="small" type="success" @click="clickViewInstructor(scope.$index, scope.row)">查看</el-button>
               <el-button size="small" type="warning" @click="clickModifyInstructor(scope.$index, scope.row)">修改</el-button>
             </template>
@@ -39,13 +39,13 @@
       <el-table-column label="实验报告模板">
         <el-table-column prop="状态" label="状态">
           <template #default="scope">
-            <el-tag v-if="scope.row.template !== null">已上传</el-tag>
+            <el-tag v-if="scope.row.template != null">已上传</el-tag>
             <el-tag v-else type="info">未上传</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="操作" label="操作">
           <template #default="scope">
-            <template v-if="scope.row.template !== null">
+            <template v-if="scope.row.template != null">
               <el-button size="small" type="success" @click="clickViewTemplate(scope.$index, scope.row)">查看</el-button>
               <el-button size="small" type="warning" @click="clickModifyTemplate(scope.$index, scope.row)">修改</el-button>
             </template>
