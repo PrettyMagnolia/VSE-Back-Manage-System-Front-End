@@ -107,17 +107,66 @@
       </span>
     </template>
   </el-dialog>  
+  <el-dialog
+    v-model="addDialogVisible"
+    title="新增实验"
+    :before-close="handleClose"
+  >
+    <el-table :data="addExperimentList" stripe style="width: 100%;" ref="multipleTableRef" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" />
+      <el-table-column prop="experimentId" label="实验序号" width="100" />
+      <el-table-column prop="experimentName" label="实验名称" width="450" />
+      <el-table-column label="实验指导书">
+        <el-table-column prop="状态" label="状态" width="90">
+          <template #default="scope">
+            <el-tag v-if="scope.row.instructor != null">已上传</el-tag>
+            <el-tag v-else type="info">未上传</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="操作" label="操作" width="90">
+          <template #default="scope">
+            <el-button type="primary" size="small" :disabled="scope.row.instructor == null" @click="clickViewInstructor(scope.$index, scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table-column>
+      <el-table-column label="实验报告模板">
+        <el-table-column prop="状态" label="状态" width="90">
+          <template #default="scope">
+            <el-tag v-if="scope.row.template != null">已上传</el-tag>
+            <el-tag v-else type="info">未上传</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="操作" label="操作" width="90">
+          <template #default="scope">
+            <el-button type="primary" size="small" :disabled="scope.row.template == null" @click="clickViewTemplate(scope.$index, scope.row)">查看</el-button>
+          </template>
+        </el-table-column>
+      </el-table-column>
+    </el-table>
+
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="clickConfirmAddExperiment()">
+          确定
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
 </template>
 
 <script setup lang="ts" name="experiment">
 import { ref, reactive } from 'vue'
 import { Experiment } from '@/api/interface'
-import { getOneCourseAllExperiments, modifyExperimentInCourse, deleteExperimentInCourse } from '@/api/modules/experiment'
+import { getOneCourseAllExperiments, modifyExperimentInCourse, deleteExperimentInCourse, getOneCourseExceptionExperiments, addExperimentInCourse } from '@/api/modules/experiment'
 import type { FormRules } from 'element-plus'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElTable } from 'element-plus'
 
 const regex = /teaching\/(\d+)/;
 const experimentList = ref<Experiment.CourseExperimentList[]>([]);
+
+const addExperimentList = ref<Experiment.ExperimentList[]>([]);
 
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -133,6 +182,8 @@ const form = reactive({
   endTime: '',
   score: 0,
 })
+
+const addDialogVisible = ref(false);
 
 const rules = reactive<FormRules>({
   experimentName: [
@@ -167,6 +218,13 @@ const rules = reactive<FormRules>({
   ],
 })
 
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+const multipleSelection = ref<Experiment.ExperimentList[]>([])
+const handleSelectionChange = (val: Experiment.ExperimentList[]) => {
+  multipleSelection.value = val;
+  console.log(multipleSelection.value);
+}
+
 let url = window.location.href
 let match = url.match(regex);
 if (match) {
@@ -188,6 +246,7 @@ const formIncomplete = () => {
 }
 
 const dateFormat = (timestamp: string) => {
+  if (timestamp == null) return "";
   const dateObj: Date = new Date(timestamp);
 
   // 获取年、月、日、小时、分钟和秒
@@ -206,6 +265,13 @@ const dateFormat = (timestamp: string) => {
 
 const clickAddExperiment = () => {
   console.log("添加新实验")
+  getOneCourseExceptionExperiments(courseId.value).then(res => {
+    console.log("当前没有选择实验有", res.data);
+    addExperimentList.value = res.data;
+
+  })
+  addDialogVisible.value = true;
+
 }
 
 const clickDeleteExperiment = (index: number, row: Experiment.CourseExperimentList) => {
@@ -264,6 +330,27 @@ const clickConfirmModifyExperiment = () => {
         });
         modifyDialogVisible.value = false;
       })
+    })
+  }
+}
+
+const clickConfirmAddExperiment = () => {
+  console.log("确认添加实验");
+  if (multipleSelection.value.length !== 0) {
+    let experimentIdList = multipleSelection.value.map(obj => obj.experimentId.toString());
+    addExperimentInCourse(courseId.value.toString(), experimentIdList).then(res => {
+      console.log(res);
+      getOneCourseAllExperiments(courseId.value).then(res => {
+        console.log("当前课程中的实验为：", res.data)
+        experimentList.value = res.data;
+        experimentList.value.forEach(e => {
+          console.log(typeof e.startTime);
+          e.startTime = dateFormat(e.startTime);
+          e.endTime = dateFormat(e.endTime);
+        });
+        modifyDialogVisible.value = false;
+      })
+      addDialogVisible.value = false;
     })
   }
 }
