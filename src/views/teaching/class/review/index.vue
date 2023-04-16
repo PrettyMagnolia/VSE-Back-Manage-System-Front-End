@@ -34,7 +34,9 @@
       </el-col>
     </el-row>
     <div style="height: 10px;" />
-    <el-table :data="tableData" v-if="tableData != undefined" height="500" class="table" @row-click="handleRowClick">
+    <el-table
+      :data="tableData" v-if="tableData != undefined" :highlight-current-row="true" height="500" class="table"
+      @row-click="handleRowClick">
       <el-table-column prop="schoolNumber" label="学号" width="100" />
       <el-table-column fixed prop="stuName" label="姓名" width="100" />
       <el-table-column prop="submitTime" label="最近提交时间" width="200" />
