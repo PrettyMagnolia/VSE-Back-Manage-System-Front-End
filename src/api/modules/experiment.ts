@@ -14,3 +14,13 @@ export const getAllExperiments = () => {
 export const getOneCourseAllExperiments = (courseId: number) => {
 	return http.get<Experiment.CourseExperimentList[]>(PORT1 + `/experimentincourse`, {courseId}, { headers: { noLoading: true } })
 }
+
+// 修改课程中的实验
+export const modifyExperimentInCourse = (courseId: string, experimentId: string, startTime: string, endTime: string, score: string) => {
+	return http.put<string>(PORT1 + `/modify_experimentincourse`, {courseId, experimentId, startTime, endTime, score}, { headers: { noLoading: true } })
+}
+
+// 删除课程中的实验
+export const deleteExperimentInCourse = (courseId: number, experimentId: number) => {
+	return http.delete<string>(PORT1 + `/delete_experimentincourse`, {courseId, experimentId}, { headers: { noLoading: true } })
+}

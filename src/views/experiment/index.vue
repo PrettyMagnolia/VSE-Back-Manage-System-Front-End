@@ -93,7 +93,6 @@ import { ref, onMounted } from 'vue'
 import { getAllExperiments } from "@/api/modules/experiment"
 import { Experiment } from '@/api/interface'
 import { UploadFilled } from '@element-plus/icons-vue'
-import router from '@/routers'
 
 const input = ref('')
 const dialogTableVisible = ref(false)
@@ -122,7 +121,7 @@ const handleCurrentChange = (val: number) => {
 
 const clickViewInstructor = (index: number, row: Experiment.ExperimentList) => {
   console.log("查看实验指导书", index, row)
-  router.push("/showInfo/")
+  window.open(row.instructor, '_blank')
 }
 const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) => {
   console.log("修改实验指导书", index, row)
@@ -131,6 +130,7 @@ const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) =>
 }
 const clickViewTemplate = (index: number, row: Experiment.ExperimentList) => {
   console.log("查看实验报告模板", index, row)
+  window.open(row.template, '_blank')
 }
 const clickModifyTemplate = (index: number, row: Experiment.ExperimentList) => {
   console.log("修改实验报告模板", index, row)
