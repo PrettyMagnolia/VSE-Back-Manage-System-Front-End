@@ -10,13 +10,16 @@
       </el-input>
     </el-form-item>
     <el-form-item prop="school">
-      <el-input v-model="loginForm.school" placeholder="学校：同济大学">
+      <el-select
+        v-model="loginForm.school" filterable remote :remote-method="remoteMethod" :loading="loading2"
+        placeholder="学校：同济大学" style="width: 100%;">
         <template #prefix>
           <el-icon class="el-input__icon">
             <user />
           </el-icon>
         </template>
-      </el-input>
+        <el-option v-for="item in options" :key="item" :label="item" :value="item" />
+      </el-select>
     </el-form-item>
     <el-form-item prop="password">
       <el-input
@@ -52,6 +55,7 @@ import { HOME_URL } from "@/config/config";
 import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
+import { getSchoolNameList } from "@/api/modules/review";
 
 const router = useRouter();
 const tabsStore = TabsStore();
@@ -121,6 +125,20 @@ onMounted(() => {
 		}
 	};
 });
+
+//
+const options = ref<string[]>([])
+const loading2 = ref<boolean>(false)
+const remoteMethod = async (query: string) => {
+	if (query) {
+		loading2.value = true;
+		const { data } = await getSchoolNameList({ key: query });
+		options.value = data;
+		loading2.value = false;
+	} else {
+		options.value = []
+	}
+}
 </script>
 
 <style scoped lang="scss">

@@ -94,5 +94,8 @@ export namespace Review {
 		semester: string,
 		year: string
 	}
+	export interface ReqSchool {
+		key: string
+	}
 }
 
