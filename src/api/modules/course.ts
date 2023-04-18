@@ -15,3 +15,8 @@ export const getCoursesByTeacher = (params : object) => {
 export const addCourse = (params : CourseManagement.CourseDetailInfo) => {
 	return http.post<CourseManagement.CourseDetailInfo>(PORT1 + `/addcourse`, params, { headers: { noLoading: true } });
 };
+
+//获取课程学生名单
+export const getCourseStudents = (id : string) => {
+	return http.get<CourseManagement.StudentBasicInfo>(PORT1 + `/coursestudent`, {courseId: id}, { headers: { noLoading: true } });
+}

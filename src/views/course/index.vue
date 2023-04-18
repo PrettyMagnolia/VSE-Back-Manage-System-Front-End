@@ -21,7 +21,12 @@
       <el-table-column prop="courseId" label="课程序号" width="220" />
       <el-table-column prop="courseName" label="课程名称" width="220" />
       <el-table-column prop="year" label="开课学年" width="220" />
-      <el-table-column prop="semester" label="开课学期" />
+      <el-table-column prop="semester" label="开课学期" width="220" />
+      <el-table-column fixed="right" label="操作">
+        <template #default="scope">
+          <el-button link type="primary" @click="viewStudents(scope.row)">查看学生</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!-- <el-pagination
       v-model:current-page="currentPage"
@@ -70,6 +75,32 @@
       </el-form-item>
     </el-form>
   </el-dialog>
+
+  <!--管理学生的弹出框-->
+  <el-dialog v-model="dialogStudentsVisible" title="课程学生管理">
+    <el-table :data="studentViewList" stripe style="width: 100%; min-height: 350px">
+      <el-table-column prop="stuId" label="学生序号" width="130" />
+      <el-table-column prop="schoolNumber" label="学号" width="130" />
+      <el-table-column prop="stuName" label="姓名" width="130" />
+      <el-table-column prop="school" label="学校" width="130" />
+      <el-table-column fixed="right" label="操作">
+        <template #default="scope">
+          <el-button link type="primary" @click="viewStudents(scope.row)">查看学生</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      v-model:current-page="studentPageParams.currentPage"
+      v-model:page-size="studentPageParams.pageSize"
+      :page-sizes="[20, 50, 100, 200]"
+      :small="false"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="showList.length"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
+  </el-dialog>
+
 </template>
 
 <script setup lang="ts" name="course">
@@ -78,7 +109,7 @@ import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UploadInstance } from 'element-plus'
 import { CourseManagement } from '@/api/interface'
-import { getCoursesByTeacher, addCourse } from "@/api/modules/course"
+import { getCoursesByTeacher, addCourse, getCourseStudents } from "@/api/modules/course"
 import { ElMessage } from 'element-plus'
 // import { defineComponent } from "vue";
 import * as XLSX from "xlsx"; // vue3可用此引入
@@ -86,6 +117,7 @@ import * as XLSX from "xlsx"; // vue3可用此引入
 const index = 199
 const input = ref('')
 const dialogTableVisible = ref(false)
+const dialogStudentsVisible = ref(false)
 const showList = ref<CourseManagement.CourseInfo[]>([])
 const addCourseForm = ref({ courseName: '', semester: '春季', year: 2023, teacherId: 2001001, studentList: [] })
 const yearOptions = [
@@ -121,7 +153,8 @@ const semesterOptions = [
   },
 ]
 const upload = ref<UploadInstance>()
-const studentList : object[] = []
+//用于导入的学生列表
+const studentList: object[] = []
 
 const ruleFormRef = ref<FormInstance>()
 const rules = reactive<FormRules>({
@@ -140,6 +173,14 @@ const rules = reactive<FormRules>({
   studentList: [
     { required: true, message: '请导入学生名单', trigger: 'blur' },
   ]
+})
+
+//用于展示的学生列表
+const studentViewList = ref([])
+
+const studentPageParams = ref({
+  currentPage: 0,
+  pageSize: 20,
 })
 
 onMounted(() => {
@@ -163,6 +204,23 @@ onMounted(() => {
       console.log(err)
     })
 });
+
+const viewStudents = (e: CourseManagement.CourseInfo)=>{
+  dialogStudentsVisible.value = true
+  console.log(e)
+
+  let courseId : string = e.courseId.toString()
+  //根据该课程的courseId，去后端拿到这个课程的所有学生
+  getCourseStudents(courseId)
+  .then(res=>{
+    console.log('该班级的学生列表：', res)
+    studentViewList.value = res.data
+  })
+  .catch(err=>{
+    console.log(err)
+  })
+
+}
 
 const uploadChange = async (e) => {
   console.log(e);
@@ -258,7 +316,7 @@ const onSubmit = () => {
 
   let list = studentList.value
 
-  list.forEach(item=>{
+  list.forEach(item => {
     params.studentList.push(item['序号'])
   })
 
@@ -309,16 +367,13 @@ const onCancel = () => {
   dialogTableVisible.value = false
 }
 
-// 搜索
-const clickSearch = () => {
-  console.log("输入的搜索内容是", input.value)
-  //showList.value = experimentList.value.filter(item => item.experimentName.includes(input.value));
-}
-// const clickReset = () => {
-//   console.log("重置")
-//   //showList.value = experimentList.value;
-//   input.value = ''
-// }
 </script>
 
-<style scoped></style>
+<style scoped>
+.demo-pagination-block + .demo-pagination-block {
+  margin-top: 10px;
+}
+.demo-pagination-block .demonstration {
+  margin-bottom: 16px;
+}
+</style>

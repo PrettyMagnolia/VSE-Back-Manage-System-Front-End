@@ -112,6 +112,12 @@ export namespace CourseManagement{
 		studentList: number[],
 		teacherList: number[]
 	}
+	export interface StudentBasicInfo{
+		stuId: number,
+		schoolNumber: number,
+		stuName: string,
+		school: string
+	}
 
 }
 
