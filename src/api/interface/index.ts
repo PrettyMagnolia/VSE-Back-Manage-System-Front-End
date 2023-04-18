@@ -99,3 +99,36 @@ export namespace Review {
 	}
 }
 
+//课程管理模块
+export namespace CourseManagement{
+	export interface CourseInfo {
+		courseId: number,
+		courseName: string,
+		semester: string,
+		year: number
+	}
+	export interface CourseDetailInfo{
+		// courseId: number,
+		courseName: string,
+		semester: string,
+		year: number,
+		studentList: number[],
+		teacherList: number[]
+	}
+
+}
+
+//成绩模块
+export namespace Score{
+	export interface SingleExperimentScore{
+		experimentName: string,
+		score: number
+	}
+	export interface StudentCourseTotalScore{
+		index: number,
+		studentId: number,
+		studentName: string,
+		totalScore: number,
+		scoreList: SingleExperimentScore[]
+	}
+}
