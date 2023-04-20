@@ -109,7 +109,7 @@ export namespace CourseManagement{
 		courseName: string,
 		semester: string,
 		year: number,
-		studentList: number[],
+		studentList: ImportedStudent[],
 		teacherList: number[]
 	}
 	export interface StudentBasicInfo{
@@ -117,6 +117,13 @@ export namespace CourseManagement{
 		schoolNumber: number,
 		stuName: string,
 		school: string
+	}
+	export interface ImportedStudent{
+		学号: number | string,
+		学校: string,
+		姓名: string,
+		性别: string,
+		邮箱: string
 	}
 
 }
