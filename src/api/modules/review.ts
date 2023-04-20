@@ -38,3 +38,10 @@ export const getCourseInfo = (params: Review.ReqCourseInfo) => {
 export const getStudentList = (params: Review.ReqCourseInfo) => {
   return http.get<UserInfo[]>(PORT1 + `/review/student`, params, { headers: { noLoading: true } });
 }
+
+/**
+ * 获取
+ */
+export const getSchoolNameList = (params: Review.ReqSchool) => {
+  return http.get<string[]>(PORT1 + `/review/school-name`, params, { headers: { noLoading: true } })
+}

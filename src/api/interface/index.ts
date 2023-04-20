@@ -94,6 +94,9 @@ export namespace Review {
 		semester: string,
 		year: string
 	}
+	export interface ReqSchool {
+		key: string
+	}
 }
 
 //课程管理模块
