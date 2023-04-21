@@ -14,9 +14,13 @@
             <el-tag v-else type="info">未上传</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="操作" label="操作">
+        <el-table-column prop="操作" label="操作" width="140">
           <template #default="scope">
-            <el-button type="primary" size="small" :disabled="scope.row.instructor == null" @click="clickViewInstructor(scope.$index, scope.row)">查看</el-button>
+            <template v-if="scope.row.instructor != null">
+              <el-button size="small" type="success" @click="clickViewInstructor(scope.$index, scope.row)">查看</el-button>
+              <el-button size="small" type="warning" @click="clickModifyInstructor(scope.$index, scope.row)">修改</el-button>
+            </template>
+            <el-button v-else size="small" type="danger" @click="clickModifyInstructor(scope.$index, scope.row)">上传</el-button>
           </template>
         </el-table-column>
       </el-table-column>
@@ -27,9 +31,13 @@
             <el-tag v-else type="info">未上传</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="操作" label="操作">
+        <el-table-column prop="操作" label="操作" width="140">
           <template #default="scope">
-            <el-button type="primary" size="small" :disabled="scope.row.template == null" @click="clickViewTemplate(scope.$index, scope.row)">查看</el-button>
+            <template v-if="scope.row.template != null">
+              <el-button size="small" type="success" @click="clickViewTemplate(scope.$index, scope.row)">查看</el-button>
+              <el-button size="small" type="warning" @click="clickModifyTemplate(scope.$index, scope.row)">修改</el-button>
+            </template>
+            <el-button v-else size="small" type="danger" @click="clickModifyTemplate(scope.$index, scope.row)">上传</el-button>
           </template>
         </el-table-column>
       </el-table-column>
@@ -115,33 +123,7 @@
     <el-table :data="addExperimentList" stripe style="width: 100%;" ref="multipleTableRef" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" />
       <el-table-column prop="experimentId" label="实验序号" width="100" />
-      <el-table-column prop="experimentName" label="实验名称" width="450" />
-      <el-table-column label="实验指导书">
-        <el-table-column prop="状态" label="状态" width="90">
-          <template #default="scope">
-            <el-tag v-if="scope.row.instructor != null">已上传</el-tag>
-            <el-tag v-else type="info">未上传</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="操作" label="操作" width="90">
-          <template #default="scope">
-            <el-button type="primary" size="small" :disabled="scope.row.instructor == null" @click="clickViewInstructor(scope.$index, scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-      </el-table-column>
-      <el-table-column label="实验报告模板">
-        <el-table-column prop="状态" label="状态" width="90">
-          <template #default="scope">
-            <el-tag v-if="scope.row.template != null">已上传</el-tag>
-            <el-tag v-else type="info">未上传</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="操作" label="操作" width="90">
-          <template #default="scope">
-            <el-button type="primary" size="small" :disabled="scope.row.template == null" @click="clickViewTemplate(scope.$index, scope.row)">查看</el-button>
-          </template>
-        </el-table-column>
-      </el-table-column>
+      <el-table-column prop="experimentName" label="实验名称" />
     </el-table>
 
     <template #footer>
@@ -154,6 +136,24 @@
     </template>
   </el-dialog>
 
+  <el-dialog v-model="dialogTableVisible" :title="dialogTitle">
+    <el-upload
+      class="upload-demo"
+      drag
+      action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+      multiple
+    >
+      <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+      <div class="el-upload__text">
+        Drop file here or <em>click to upload</em>
+      </div>
+      <template #tip>
+        <div class="el-upload__tip">
+          jpg/png files with a size less than 500kb
+        </div>
+      </template>
+    </el-upload>
+  </el-dialog>
 </template>
 
 <script setup lang="ts" name="experiment">
@@ -176,6 +176,10 @@ const currentExperiment = ref<Experiment.CourseExperimentList>();
 const deleteDialogVisible = ref(false)
 
 const modifyDialogVisible = ref(false)
+
+const dialogTableVisible = ref(false)
+const dialogTitle = ref("")
+
 const form = reactive({
   experimentName: '',
   startTime: '',
@@ -360,9 +364,21 @@ const clickViewInstructor = (index: number, row: Experiment.CourseExperimentList
   window.open(row.instructor, '_blank')
 }
 
+const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) => {
+  console.log("修改实验指导书", index, row)
+  dialogTitle.value = row.experimentName + "  实验指导书"
+  dialogTableVisible.value = true;
+}
+
 const clickViewTemplate = (index: number, row: Experiment.CourseExperimentList) => {
   console.log("查看实验报告模板", index, row)
   window.open(row.template, '_blank')
+}
+
+const clickModifyTemplate = (index: number, row: Experiment.ExperimentList) => {
+  console.log("修改实验报告模板", index, row)
+  dialogTitle.value = row.experimentName + "  实验报告模板"
+  dialogTableVisible.value = true;
 }
 
 </script>
