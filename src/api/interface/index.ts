@@ -55,52 +55,47 @@ export interface ResUserInfo {
 	role: number
 }
 
-// * 用户管理模块
-export namespace User {
-	export interface ReqUserParams extends ReqPage {
-		username: string;
-		gender: number;
-		idCard: string;
-		email: string;
-		address: string;
-		createTime: string[];
-		status: number;
+// * 批阅实验报告模块
+export namespace Review {
+	export interface Experiment {
+		experimentId: number,
+		experimentName: string,
+		startTime: string,
+		endTime: string
+		score: number
 	}
-	export interface ResUserList {
-		id: string;
-		username: string;
-		gender: number;
-		user: {
-			detail: {
-				age: number;
-			};
-		};
-		idCard: string;
-		email: string;
-		address: string;
-		createTime: string;
-		status: number;
-		avatar: string;
-		photo: any[];
-		children?: ResUserList[];
+	export interface ReqExperiments {
+		courseId: string
 	}
-	export interface ResStatus {
-		userLabel: string;
-		userValue: number;
+	export interface ReqStudentSubmit {
+		courseId: string,
+		experimentId: string
 	}
-	export interface ResGender {
-		genderLabel: string;
-		genderValue: number;
+	export interface StudentSubmit {
+		reportId?: number,
+		stuId: number,
+		schoolNumber: string,
+		stuName: string,
+		submitTime?: string
+		reviewTime?: string
+		reportUrl?: string
+		score?: number
 	}
-	export interface ResDepartment {
-		id: string;
-		name: string;
-		children?: ResDepartment[];
+	export interface ReqGiveScore {
+		reportId: number,
+		score: number
 	}
-	export interface ResRole {
-		id: string;
-		name: string;
-		children?: ResDepartment[];
+	export interface ReqCourseInfo {
+		courseId: number
+	}
+	export interface CourseInfo {
+		courseId: number,
+		courseName: string,
+		semester: string,
+		year: string
+	}
+	export interface ReqSchool {
+		key: string
 	}
 }
 
@@ -120,5 +115,51 @@ export namespace Experiment {
 		score: number;
 		startTime: string;
 		endTime: string;
+	}
+}
+//课程管理模块
+export namespace CourseManagement{
+	export interface CourseInfo {
+		courseId: number,
+		courseName: string,
+		semester: string,
+		year: number
+	}
+	export interface CourseDetailInfo{
+		// courseId: number,
+		courseName: string,
+		semester: string,
+		year: number,
+		studentList: ImportedStudent[],
+		teacherList: number[]
+	}
+	export interface StudentBasicInfo{
+		stuId: number,
+		schoolNumber: number,
+		stuName: string,
+		school: string
+	}
+	export interface ImportedStudent{
+		学号: number | string,
+		学校: string,
+		姓名: string,
+		性别: string,
+		邮箱: string
+	}
+
+}
+
+//成绩模块
+export namespace Score{
+	export interface SingleExperimentScore{
+		experimentName: string,
+		score: number
+	}
+	export interface StudentCourseTotalScore{
+		index: number,
+		studentId: number,
+		studentName: string,
+		totalScore: number,
+		scoreList: SingleExperimentScore[]
 	}
 }
