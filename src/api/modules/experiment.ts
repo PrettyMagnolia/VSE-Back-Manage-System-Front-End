@@ -34,3 +34,21 @@ export const modifyExperimentInCourse = (courseId: string, experimentId: string,
 export const deleteExperimentInCourse = (courseId: number, experimentId: number) => {
 	return http.delete<string>(PORT1 + `/delete_experimentincourse`, {courseId, experimentId}, { headers: { noLoading: true } })
 }
+
+// 上传实验指导书	
+export const uploadExperimentInstructor = (file: File, courseId: number, experimentId: number) => {
+	const formData = new FormData();
+	formData.append('file', file.raw);
+	formData.append('courseId', JSON.stringify(courseId));
+	formData.append('experimentId', JSON.stringify(experimentId));
+	return http.post<string>(PORT1 + `/upload_experiment_instructor`, formData, { headers: { noLoading: true, 'Content-Type': 'multipart/form-data' } })
+}
+
+// 上传实验报告模板
+export const uploadExperimentTemplate = (file: File, courseId: number, experimentId: number) => {
+	const formData = new FormData();
+	formData.append('file', file.raw);
+	formData.append('courseId', JSON.stringify(courseId));
+	formData.append('experimentId', JSON.stringify(experimentId));
+	return http.post<string>(PORT1 + `/upload_experiment_template`, formData, { headers: { noLoading: true, 'Content-Type': 'multipart/form-data' } })
+}

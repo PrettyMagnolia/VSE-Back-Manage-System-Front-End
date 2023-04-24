@@ -43,7 +43,7 @@
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
-        Drop file here or <em>click to upload</em>
+        拖拽文件或 <em>点击此处</em> 上传
       </div>
       <template #tip>
         <div class="el-upload__tip">

@@ -128,7 +128,7 @@
 
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="addDialogVisible = false">取消</el-button>
+        <el-button @click="addDialogVisible = false; fileList.value = []">取消</el-button>
         <el-button type="primary" @click="clickConfirmAddExperiment()">
           确定
         </el-button>
@@ -140,26 +140,32 @@
     <el-upload
       class="upload-demo"
       drag
-      action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-      multiple
+      :auto-upload="false"
+      :on-change="onUploadChange"
+      :on-remove="handleRemove"
+      :file-list="fileList"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
-        Drop file here or <em>click to upload</em>
+        拖拽文件或 <em>点击此处</em> 上传
       </div>
       <template #tip>
         <div class="el-upload__tip">
-          jpg/png files with a size less than 500kb
+          仅支持上传单个文件，格式为pdf/word  
         </div>
       </template>
     </el-upload>
+    
+    <el-button type="primary" @click="confirmUpload">确认</el-button>
+    
+    <el-button type="info" @click="dialogTableVisible = false; fileList = []">取消</el-button>
   </el-dialog>
 </template>
 
 <script setup lang="ts" name="experiment">
 import { ref, reactive } from 'vue'
 import { Experiment } from '@/api/interface'
-import { getOneCourseAllExperiments, modifyExperimentInCourse, deleteExperimentInCourse, getOneCourseExceptionExperiments, addExperimentInCourse } from '@/api/modules/experiment'
+import { getOneCourseAllExperiments, modifyExperimentInCourse, deleteExperimentInCourse, getOneCourseExceptionExperiments, addExperimentInCourse, uploadExperimentInstructor, uploadExperimentTemplate } from '@/api/modules/experiment'
 import type { FormRules } from 'element-plus'
 import { ElMessage, ElTable } from 'element-plus'
 
@@ -171,6 +177,8 @@ const addExperimentList = ref<Experiment.ExperimentList[]>([]);
 const currentPage = ref(1)
 const pageSize = ref(10)
 const courseId = ref(0)
+
+const fileList = ref<File[]>([])
 
 const currentExperiment = ref<Experiment.CourseExperimentList>();
 const deleteDialogVisible = ref(false)
@@ -186,6 +194,9 @@ const form = reactive({
   endTime: '',
   score: 0,
 })
+
+const currentExperimentId = ref(0);
+const currentType = ref("");
 
 const addDialogVisible = ref(false);
 
@@ -366,6 +377,8 @@ const clickViewInstructor = (index: number, row: Experiment.CourseExperimentList
 
 const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) => {
   console.log("修改实验指导书", index, row)
+  currentExperimentId.value = row.experimentId;
+  currentType.value = "指导书";
   dialogTitle.value = row.experimentName + "  实验指导书"
   dialogTableVisible.value = true;
 }
@@ -377,8 +390,72 @@ const clickViewTemplate = (index: number, row: Experiment.CourseExperimentList) 
 
 const clickModifyTemplate = (index: number, row: Experiment.ExperimentList) => {
   console.log("修改实验报告模板", index, row)
+  currentExperimentId.value = row.experimentId;
+  currentType.value = "模板";
   dialogTitle.value = row.experimentName + "  实验报告模板"
   dialogTableVisible.value = true;
+}
+
+// const clickCnacelAddExperiment = () => {
+//   dialogTableVisible.value = false;
+//   fileList.value.pop();
+// }
+
+const onUploadChange = (file: File) => {
+  console.log("添加文件");
+  fileList.value.push(file);
+  console.log(fileList);
+}
+
+const handleRemove = () => {
+  console.log("删除文件");
+  fileList.value.pop();
+  console.log(fileList);
+}
+
+const confirmUpload = () => {
+  console.log("确认上传");
+  if (currentType.value == "指导书") {
+    uploadExperimentInstructor(fileList.value[0], courseId.value, Number(currentExperimentId.value))
+    .then(res => {
+      console.log(res);
+      getOneCourseAllExperiments(courseId.value).then(res => {
+        console.log("当前课程中的实验为：", res.data)
+        experimentList.value = res.data;
+        experimentList.value.forEach(e => {
+          console.log(typeof e.startTime);
+          e.startTime = dateFormat(e.startTime);
+          e.endTime = dateFormat(e.endTime);
+        });
+
+        dialogTableVisible.value = false;
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  } 
+  else {
+    uploadExperimentTemplate(fileList.value[0], courseId.value, Number(currentExperimentId.value))
+    .then(res => {
+      console.log(res);
+      getOneCourseAllExperiments(courseId.value).then(res => {
+        console.log("当前课程中的实验为：", res.data)
+        experimentList.value = res.data;
+        experimentList.value.forEach(e => {
+          console.log(typeof e.startTime);
+          e.startTime = dateFormat(e.startTime);
+          e.endTime = dateFormat(e.endTime);
+        });
+
+        dialogTableVisible.value = false;
+      })
+    })
+    .catch(err => {
+      console.log(err);
+    })
+  }
+  
 }
 
 </script>
