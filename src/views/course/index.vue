@@ -22,6 +22,11 @@
       <el-table-column prop="courseName" label="课程名称" width="220" />
       <el-table-column prop="year" label="开课学年" width="220" />
       <el-table-column prop="semester" label="开课学期" />
+      <!-- <el-table-column fixed="right" label="操作">
+        <template #default="scope">
+          <el-button link type="primary" @click="viewStudents(scope.row)">查看学生</el-button>
+        </template>
+      </el-table-column> -->
     </el-table>
     <!-- <el-pagination
       v-model:current-page="currentPage"
@@ -39,7 +44,7 @@
 
   <!--新增课程的弹出框-->
   <el-dialog v-model="dialogTableVisible" title="新增课程">
-    <el-form :model="addCourseForm" :rules="rules" ref="ruleFormRef" label-width="120px">
+    <el-form :model="addCourseForm" :rules="courseRules" ref="ruleFormRef" label-width="120px">
       <el-form-item label="课程名称" prop="courseName">
         <el-input v-model="addCourseForm.courseName" />
       </el-form-item>
@@ -62,13 +67,80 @@
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将xls/xlsx文件拖到此处，或<em>点击上传</em></div>
         </el-upload>
-        <!-- <el-form v-else></el-form> -->
+
+        <!--教程弹出框-->
+        <div class="question">
+          <el-popover :width="500" trigger="hover"
+            popper-style="box-shadow: rgb(14 18 22 / 35%) 0px 10px 38px -10px, rgb(14 18 22 / 20%) 0px 10px 20px -15px; padding: 20px;">
+            <template #reference>
+              <el-icon>
+                <QuestionFilled />
+              </el-icon>
+            </template>
+            <template #default>
+              • 导入的文件需要为xls/xlsx格式的Excel文件<br>
+              • 列的属性包括学校、学号、姓名、性别、邮箱<br>
+              • 各列均无顺序要求
+              <p style="font-weight:700">示例：</p>
+              <img src="@/assets/images/import-instructor.png" class="instructor-image" />
+            </template>
+          </el-popover>
+        </div>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit">确认</el-button>
-        <el-button @click="onCancel">取消</el-button>
+
+    </el-form>
+    <!--显示学生列表-->
+    <div>
+      <el-button type="primary" @click="() => { dialogAddStudentVisible = true }">添加学生</el-button>
+      <el-table
+        :data="studentList.slice((studentPageParams.currentPage - 1) * studentPageParams.pageSize, studentPageParams.currentPage * studentPageParams.pageSize)"
+        stripe style="width: 100%; min-height: 350px">
+        <el-table-column prop="学校" label="学校" width="100" />
+        <el-table-column prop="学号" label="学号" width="100" />
+        <el-table-column prop="姓名" label="姓名" width="100" />
+        <el-table-column prop="性别" label="性别" width="70" />
+        <el-table-column prop="邮箱" label="邮箱" width="220" />
+        <el-table-column fixed="right" label="操作">
+          <template #default="scope">
+            <el-button link type="danger" @click="removeStudent(scope.row)">移除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination v-model:current-page="studentPageParams.currentPage" v-model:page-size="studentPageParams.pageSize"
+        :page-sizes="[10, 20, 50, 100]" :small="false" layout="total, sizes, prev, pager, next, jumper"
+        :total="studentList.length" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+    </div>
+
+    <el-button type="primary" @click="onSubmit">确认</el-button>
+    <el-button @click="onCancel">取消</el-button>
+  </el-dialog>
+
+  <!--管理学生的弹出框-->
+  <el-dialog v-model="dialogAddStudentVisible" title="添加学生">
+    <el-form :model="addStudentForm" :rules="studentRules">
+      <el-form-item prop="学校" label="学校">
+        <el-input v-model="addStudentForm!['学校']" placeholder="请输入学生学校" />
+      </el-form-item>
+      <el-form-item prop="学号" label="学号">
+        <el-input v-model="addStudentForm!['学号']" placeholder="请输入学生学号" />
+      </el-form-item>
+      <el-form-item prop="姓名" label="姓名">
+        <el-input v-model="addStudentForm!['姓名']" placeholder="请输入学生姓名" />
+      </el-form-item>
+      <el-form-item prop="性别" label="性别">
+        <el-select v-model="addStudentForm!['性别']" placeholder="请输入学生性别">
+          <el-option label="男" value="男" />
+          <el-option label="女" value="女" />
+        </el-select>
+      </el-form-item>
+      <el-form-item prop="email" label="邮箱">
+        <el-input v-model="addStudentForm!['邮箱']" placeholder="请输入学生邮箱" />
       </el-form-item>
     </el-form>
+    <div>
+      <el-button type="primary" @click="addOneStudent">添加</el-button>
+      <el-button @click="dialogAddStudentVisible = false">取消</el-button>
+    </div>
   </el-dialog>
 </template>
 
@@ -78,7 +150,7 @@ import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UploadInstance } from 'element-plus'
 import { CourseManagement } from '@/api/interface'
-import { getCoursesByTeacher, addCourse } from "@/api/modules/course"
+import { getCoursesByTeacher, addCourse, getCourseStudents } from "@/api/modules/course"
 import { ElMessage } from 'element-plus'
 // import { defineComponent } from "vue";
 import * as XLSX from "xlsx"; // vue3可用此引入
@@ -86,8 +158,20 @@ import * as XLSX from "xlsx"; // vue3可用此引入
 const index = 199
 const input = ref('')
 const dialogTableVisible = ref(false)
+const dialogAddStudentVisible = ref(false)
 const showList = ref<CourseManagement.CourseInfo[]>([])
 const addCourseForm = ref({ courseName: '', semester: '春季', year: 2023, teacherId: 2001001, studentList: [] })
+// 用于导入的学生列表
+// const studentList: object[] = []
+const studentList = ref<CourseManagement.ImportedStudent>([])
+const addStudentForm = ref<CourseManagement.ImportedStudent>({
+  学校: '',
+  学号: '',
+  姓名: '',
+  性别: '',
+  邮箱: ''
+})
+
 const yearOptions = [
   {
     value: 2023,
@@ -121,10 +205,10 @@ const semesterOptions = [
   },
 ]
 const upload = ref<UploadInstance>()
-const studentList : object[] = []
+
 
 const ruleFormRef = ref<FormInstance>()
-const rules = reactive<FormRules>({
+const courseRules = reactive<FormRules>({
   courseName: [
     { required: true, message: '请输入课程名称', trigger: 'blur' },
   ],
@@ -140,6 +224,26 @@ const rules = reactive<FormRules>({
   studentList: [
     { required: true, message: '请导入学生名单', trigger: 'blur' },
   ]
+})
+
+const studentRules = reactive<FormRules>({
+  学校: [
+    { required: true, message: '请输入学生学校', trigger: 'blur' },
+  ],
+ 学号: [
+    { required: true, message: '请输入学生学号', trigger: 'blur' },
+  ],
+  姓名: [
+    { required: true, message: '请输入学生姓名', trigger: 'blur' },
+  ]
+})
+
+
+
+
+const studentPageParams = ref({
+  currentPage: 1,
+  pageSize: 10,
 })
 
 onMounted(() => {
@@ -164,6 +268,9 @@ onMounted(() => {
     })
 });
 
+
+
+
 const uploadChange = async (e) => {
   console.log(e);
   const files = e.raw;
@@ -176,7 +283,7 @@ const uploadChange = async (e) => {
   // 读取表格
   const fileReader = new FileReader();
   fileReader.onload = (ev) => {
-    const workbook = XLSX.read(ev.target.result, {
+    const workbook = XLSX.read(ev.target!.result, {
       type: "binary",
     });
     const wsname = workbook.SheetNames[0];
@@ -186,6 +293,10 @@ const uploadChange = async (e) => {
     studentList.value = m
   };
   fileReader.readAsBinaryString(files);
+
+  //然后将导入名单显示在前端
+  console.log("学生名单：", studentList)
+
 };
 const dealExcel = (ws) => {
   let keymap = {
@@ -245,22 +356,34 @@ const getStudentNumbers = () => {
   return students
 }
 
+//对StudentList的合法性做校验
+const checkStudentList = () => {
+  //检查学生主码完整性
+  for (let i = 0; i < studentList.value.length; i++) {
+    if (studentList.value[i]['学号'] == null || studentList.value[i]['学号'] == '' ||
+      studentList.value[i]['姓名'] == null || studentList.value[i]['姓名'] == '' ||
+      studentList.value[i]['学校'] == null || studentList.value[i]['学校'] == '') {
+      ElMessage({
+        message: '每个学生的学校、学号、姓名信息不能缺失，请检查后重新提交！',
+        type: 'warning'
+      })
+      return false
+    }
+  }
+  return true
+}
+
 //确认提交新增
 const onSubmit = () => {
+
   let params: CourseManagement.CourseDetailInfo = {
     // courseId: 0,
     courseName: addCourseForm.value.courseName,
     semester: addCourseForm.value.semester == '春季' ? 'spring' : 'fall',
     year: addCourseForm.value.year,
     teacherList: [index],
-    studentList: []
+    studentList: studentList.value
   }
-
-  let list = studentList.value
-
-  list.forEach(item=>{
-    params.studentList.push(item['序号'])
-  })
 
   /**先确认信息是否填写完整！ */
   if (params['courseName'] == '' ||
@@ -275,7 +398,13 @@ const onSubmit = () => {
     return;
   }
 
+  //校验导入学生名单的合法性
+  if (!checkStudentList()) {
+    return;
+  }
+
   console.log("要发出去的数据：", params)
+  console.log(JSON.stringify(params));
 
   addCourse(params)
     .then(res => {
@@ -309,16 +438,53 @@ const onCancel = () => {
   dialogTableVisible.value = false
 }
 
-// 搜索
-const clickSearch = () => {
-  console.log("输入的搜索内容是", input.value)
-  //showList.value = experimentList.value.filter(item => item.experimentName.includes(input.value));
+//在学生预览中删除学生
+const removeStudent = (row: CourseManagement.ImportedStudent) => {
+  studentList.value = studentList.value.filter(function (item) {
+    return item != row;
+  });
 }
-// const clickReset = () => {
-//   console.log("重置")
-//   //showList.value = experimentList.value;
-//   input.value = ''
-// }
+
+//在学生预览中手动添加一名学生
+const addOneStudent = () => {
+  studentList.value.push(addStudentForm.value)
+  console.log("addStudentForm:", addStudentForm, addStudentForm.value)
+  console.log("studentList:", studentList.value)
+  dialogAddStudentVisible.value = false
+  //每次添加完学生，清空添加的表单
+  addStudentForm.value = {
+    学校: '',
+    学号: '',
+    姓名: '',
+    性别: '',
+    邮箱: ''
+  }
+}
+
+//处理分页的回调函数
+const handleSizeChange = (size: number) => {
+  studentPageParams.value.pageSize = size
+}
+const handleCurrentChange = (currentPage: number) => {
+  studentPageParams.value.currentPage = currentPage
+}
+
 </script>
 
-<style scoped></style>
+<style scoped>
+.demo-pagination-block+.demo-pagination-block {
+  margin-top: 10px;
+}
+
+.demo-pagination-block .demonstration {
+  margin-bottom: 16px;
+}
+
+.question {
+  margin-left: 1rem;
+}
+
+.instructor-image {
+  width: 28rem;
+}
+</style>

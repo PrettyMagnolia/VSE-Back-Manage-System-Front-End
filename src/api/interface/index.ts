@@ -105,6 +105,24 @@ export namespace Review {
 	}
 }
 
+
+export namespace Experiment {
+	export interface ExperimentList {
+		experimentId: number;
+		experimentName: string;
+		instructor: string;
+		template: string;
+	}
+	export interface CourseExperimentList {
+		experimentId: number;
+		experimentName: string;
+		instructor: string;
+		template: string;
+		score: number;
+		startTime: string;
+		endTime: string;
+	}
+}
 //课程管理模块
 export namespace CourseManagement{
 	export interface CourseInfo {
@@ -118,8 +136,21 @@ export namespace CourseManagement{
 		courseName: string,
 		semester: string,
 		year: number,
-		studentList: number[],
+		studentList: ImportedStudent[],
 		teacherList: number[]
+	}
+	export interface StudentBasicInfo{
+		stuId: number,
+		schoolNumber: number,
+		stuName: string,
+		school: string
+	}
+	export interface ImportedStudent{
+		学号: number | string,
+		学校: string,
+		姓名: string,
+		性别: string,
+		邮箱: string
 	}
 
 }
