@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/html-self-closing -->
 <template>
   <div class="card index-content-box">
     <el-row align="middle" justify="center">
@@ -15,16 +14,16 @@
         </el-descriptions>
 
         <p class="tag">快捷访问</p>
-        <el-link type="success" class="link" :underline="false" @click="getRouterLink('announcement')">课程通知公告</el-link>
-        <el-link type="success" class="link" :underline="false" @click="getRouterLink('experiment')">课程实验项目</el-link>
-        <el-link type="success" class="link" :underline="false" @click="getRouterLink('review')">实验报告评阅</el-link>
-        <el-link type="success" class="link" :underline="false" @click="getRouterLink('score')">学生成绩</el-link>
-        <el-link type="success" class="link" :underline="false" @click="getRouterLink('student')">课程人员管理</el-link>
+        <el-link type="success" class="link" :underline="false">课程通知公告</el-link>
+        <el-link type="success" class="link" :underline="false">课程实验项目</el-link>
+        <el-link type="success" class="link" :underline="false">实验报告评阅</el-link>
+        <el-link type="success" class="link" :underline="false">学生成绩</el-link>
+        <el-link type="success" class="link" :underline="false">课程人员管理</el-link>
       </el-col>
 
       <el-col :span="11">
-        <div align="center">
-          <div ref="echartsRef" class="content-box pie-chart"></div>
+        <div>
+          <div ref="echartsRef" class="content-box" />
         </div>
       </el-col>
     </el-row>
@@ -113,10 +112,6 @@ onMounted(async () => {
   console.log(option);
 });
 
-const getRouterLink = (type: string) => {
-  router.replace(`/teaching/${courseId}/${type}`);
-}
-
 const semester = computed(() => {
   if (course.value?.semester == 'spring') return "秋季学期";
   else return "春季学期";
@@ -131,9 +126,7 @@ const semester = computed(() => {
 
 .tag {
   font-size: large;
-  margin: 0;
   margin-top: 40px;
-  width: 100px;
 }
 
 .link {
@@ -141,10 +134,5 @@ const semester = computed(() => {
   margin-top: 10px;
   width: 200px;
   font-size: medium;
-}
-
-.pie-chart {
-  width: 500px;
-  height: 300px;
 }
 </style>

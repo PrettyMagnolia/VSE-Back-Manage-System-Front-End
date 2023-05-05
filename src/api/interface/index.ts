@@ -99,24 +99,6 @@ export namespace Review {
 	}
 }
 
-
-export namespace Experiment {
-	export interface ExperimentList {
-		experimentId: number;
-		experimentName: string;
-		instructor: string;
-		template: string;
-	}
-	export interface CourseExperimentList {
-		experimentId: number;
-		experimentName: string;
-		instructor: string;
-		template: string;
-		score: number;
-		startTime: string;
-		endTime: string;
-	}
-}
 //课程管理模块
 export namespace CourseManagement{
 	export interface CourseInfo {
@@ -146,7 +128,25 @@ export namespace CourseManagement{
 		性别: string,
 		邮箱: string
 	}
+	export interface CourseStudents{
+		stuId: string,
+		school: string,
+		name: string,
+		gender: string,
+		email: string
+	}
 
+
+}
+//公告模块
+export namespace Announcement{
+	export interface SingleAnnouncement{
+		courseId:number | string,
+		noticeTitle: string,
+		noticeId: number  | string,
+		publishTime:string,
+		content:string
+	}
 }
 
 //成绩模块

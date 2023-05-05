@@ -21,12 +21,12 @@
       <el-table-column prop="courseId" label="课程序号" width="220" />
       <el-table-column prop="courseName" label="课程名称" width="220" />
       <el-table-column prop="year" label="开课学年" width="220" />
-      <el-table-column prop="semester" label="开课学期" />
-      <!-- <el-table-column fixed="right" label="操作">
+      <el-table-column prop="semester" label="开课学期" width="220" />
+      <el-table-column fixed="right" label="操作">
         <template #default="scope">
           <el-button link type="primary" @click="viewStudents(scope.row)">查看学生</el-button>
         </template>
-      </el-table-column> -->
+      </el-table-column>
     </el-table>
     <!-- <el-pagination
       v-model:current-page="currentPage"
@@ -98,8 +98,8 @@
         <el-table-column prop="学校" label="学校" width="100" />
         <el-table-column prop="学号" label="学号" width="100" />
         <el-table-column prop="姓名" label="姓名" width="100" />
-        <el-table-column prop="性别" label="性别" width="70" />
-        <el-table-column prop="邮箱" label="邮箱" width="220" />
+        <el-table-column prop="性别" label="性别" width="100" />
+        <el-table-column prop="邮箱" label="邮箱" width="100" />
         <el-table-column fixed="right" label="操作">
           <template #default="scope">
             <el-button link type="danger" @click="removeStudent(scope.row)">移除</el-button>
@@ -118,16 +118,16 @@
   <!--管理学生的弹出框-->
   <el-dialog v-model="dialogAddStudentVisible" title="添加学生">
     <el-form :model="addStudentForm" :rules="studentRules">
-      <el-form-item prop="学校" label="学校">
+      <el-form-item prop="school" label="学校">
         <el-input v-model="addStudentForm!['学校']" placeholder="请输入学生学校" />
       </el-form-item>
-      <el-form-item prop="学号" label="学号">
+      <el-form-item prop="id" label="学号">
         <el-input v-model="addStudentForm!['学号']" placeholder="请输入学生学号" />
       </el-form-item>
-      <el-form-item prop="姓名" label="姓名">
+      <el-form-item prop="name" label="姓名">
         <el-input v-model="addStudentForm!['姓名']" placeholder="请输入学生姓名" />
       </el-form-item>
-      <el-form-item prop="性别" label="性别">
+      <el-form-item prop="gender" label="性别">
         <el-select v-model="addStudentForm!['性别']" placeholder="请输入学生性别">
           <el-option label="男" value="男" />
           <el-option label="女" value="女" />
@@ -163,7 +163,7 @@ const showList = ref<CourseManagement.CourseInfo[]>([])
 const addCourseForm = ref({ courseName: '', semester: '春季', year: 2023, teacherId: 2001001, studentList: [] })
 // 用于导入的学生列表
 // const studentList: object[] = []
-const studentList = ref<CourseManagement.ImportedStudent>([])
+const studentList = ref<CourseManagement.ImportedStudent[]>([])
 const addStudentForm = ref<CourseManagement.ImportedStudent>({
   学校: '',
   学号: '',
@@ -227,13 +227,13 @@ const courseRules = reactive<FormRules>({
 })
 
 const studentRules = reactive<FormRules>({
-  学校: [
+  school: [
     { required: true, message: '请输入学生学校', trigger: 'blur' },
   ],
- 学号: [
+  id: [
     { required: true, message: '请输入学生学号', trigger: 'blur' },
   ],
-  姓名: [
+  name: [
     { required: true, message: '请输入学生姓名', trigger: 'blur' },
   ]
 })
@@ -270,6 +270,22 @@ onMounted(() => {
 
 
 
+const viewStudents = (e: CourseManagement.CourseInfo) => {
+  dialogAddStudentVisible.value = true
+  console.log(e)
+
+  let courseId: string = e.courseId.toString()
+  //根据该课程的courseId，去后端拿到这个课程的所有学生
+  getCourseStudents(courseId)
+    .then(res => {
+      console.log('该班级的学生列表：', res)
+      studentList.value = res.data
+    })
+    .catch(err => {
+      console.log(err)
+    })
+
+}
 
 const uploadChange = async (e) => {
   console.log(e);
