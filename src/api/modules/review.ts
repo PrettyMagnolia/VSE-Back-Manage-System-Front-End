@@ -45,3 +45,10 @@ export const getStudentList = (params: Review.ReqCourseInfo) => {
 export const getSchoolNameList = (params: Review.ReqSchool) => {
   return http.get<string[]>(PORT1 + `/review/school-name`, params, { headers: { noLoading: true } })
 }
+
+/**
+ * 修改用户信息
+ */
+export const changeUserBaseInfo = (params: Review.ReqUserInfo) => {
+  return http.put<boolean>(PORT1 + `/review/change-userinfo`, params, {});
+}

@@ -97,6 +97,12 @@ export namespace Review {
 	export interface ReqSchool {
 		key: string
 	}
+	export interface ReqUserInfo {
+		name?: string,
+		gender?: string,
+		age?: number,
+		email?: string
+	}
 }
 
 //课程管理模块

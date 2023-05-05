@@ -4,21 +4,29 @@
     <div class="left-main-content">
       <el-row :gutter="20" align="middle">
         <el-col :span="10">
-          <el-descriptions title="个人信息" :column="1" border size="large" class="description">
-            <el-descriptions-item width="400" label="用户名">
-              {{ userInfo.name }}
+          <el-descriptions title="个人信息" :column="1" border size="large">
+            <template #extra>
+              <el-button :type="!isChangingInfo?'primary':'success'" @click="changeMyInfo">{{ btnText }}</el-button>
+            </template>
+            <el-descriptions-item label="用户名" class-name="item-content">
+              <span v-if="!isChangingInfo">{{ userInfo.name }}</span> 
+              <el-input v-model="userInfo.name" v-else size="small" class="input-text" />
             </el-descriptions-item>
 
-            <el-descriptions-item width="400" label="性别  ">
-              {{ userInfo.gender }}
+            <el-descriptions-item label="性别  " class-name="item-content">
+              <span v-if="!isChangingInfo">{{ userInfo.gender }}</span> 
+              <el-input v-model="userInfo.gender" v-else size="small" class="input-text" />
             </el-descriptions-item>
 
-            <el-descriptions-item width="400" label="年龄">
-              {{ userInfo.age }}
+            <el-descriptions-item label="年龄" class-name="item-content">
+              <span v-if="!isChangingInfo">{{ userInfo.age }}</span> 
+              <el-input v-model="userInfo.age" v-else size="small" class="input-text" />
             </el-descriptions-item>
 
-            <el-descriptions-item width="400" label="邮箱  ">
-              {{ userInfo.email }}
+            <el-descriptions-item label="邮箱  " class-name="item-content">
+              <!-- {{ userInfo.email }} -->
+              <span v-if="!isChangingInfo">{{ userInfo.email }}</span> 
+              <el-input v-model="userInfo.email" v-else size="small" class="input-text" />
             </el-descriptions-item>
           </el-descriptions>
         </el-col>
@@ -49,6 +57,8 @@
 import { GlobalStore } from '@/stores';
 import UploadImg from "@/components/Upload/Img.vue";
 import { ref } from 'vue';
+import { changeUserBaseInfo } from '@/api/modules/review';
+import { ElMessage } from 'element-plus';
 
 const globalStore = GlobalStore();
 const userInfo = globalStore.userInfo;
@@ -61,6 +71,22 @@ const changeAvater = () => {
 const updateAvatar = (url: string) => {
   globalStore.userInfo.avatar = url;
 }
+
+const btnText = ref<string>('修改');
+const isChangingInfo = ref<boolean>(false)
+const changeMyInfo = async () => {
+  if(isChangingInfo.value === true) {
+    const res = await changeUserBaseInfo(userInfo);
+    if (res.data == true) {
+      ElMessage({ message: "修改成功", type: "success" })
+    }else{
+      ElMessage({ message: "修改失败", type: "error" })
+    }
+  }
+  isChangingInfo.value = !isChangingInfo.value;
+  btnText.value = isChangingInfo.value?'保存':'修改';
+}
+
 </script>
 
 <style scoped>
@@ -76,5 +102,15 @@ const updateAvatar = (url: string) => {
 
 .description {
   width: 400px;
+}
+
+.input-text{
+  margin: 0;
+  padding: 0;
+}
+
+.item-content{
+  width: 300px;
+  color: grey;
 }
 </style>
