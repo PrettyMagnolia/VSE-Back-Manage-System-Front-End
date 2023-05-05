@@ -22,7 +22,7 @@
     </el-table>
     <el-pagination v-model:current-page="studentPageParams.currentPage" v-model:page-size="studentPageParams.pageSize"
       :page-sizes="[10, 20, 50, 100]" :small="false" layout="total, sizes, prev, pager, next, jumper"
-      :total="showList.length" @size-change="handleSizeChange" @current-change="handleCurrentChange" />
+      :total="showList.length" @size-change="handleSizeChange1" @current-change="handleCurrentChange1" />
   </div>
 
   <!--管理学生的弹出框-->
@@ -43,8 +43,8 @@
     </el-table>
     <el-pagination v-model:current-page="addstudentPageParams.currentPage"
       v-model:page-size="addstudentPageParams.pageSize" :page-sizes="[10, 20, 50, 100]" :small="false"
-      layout="total, sizes, prev, pager, next, jumper" :total="freeList.length" @size-change="handleSizeChange"
-      @current-change="handleCurrentChange" />
+      layout="total, sizes, prev, pager, next, jumper" :total="freeList.length" @size-change="handleSizeChange2"
+      @current-change="handleCurrentChange2" />
   </el-dialog>
 </template>
 
@@ -52,8 +52,11 @@
 import { ref, onMounted } from 'vue'
 import { CourseManagement } from '@/api/interface'
 import { getstudentsByCourseId, addStudent, getFreeStudent, deleteStudent } from "@/api/modules/student"
+import { useRouter } from 'vue-router';
 
-const courseId = ref({ courseId: "42041301" })
+const router = useRouter();
+const routerName = router.currentRoute.value.name!.valueOf();
+const courseId = ref({ courseId: (routerName as string)!.split('-')[0] })
 const dialogAddStudentVisible = ref(false)
 // 用于导入的学生列表
 // const studentList: object[] = []
@@ -146,13 +149,17 @@ const addStudentToCourse = (row: CourseManagement.CourseStudents) => {
 }
 
 //处理分页的回调函数
-const handleSizeChange = (size: number) => {
+const handleSizeChange1 = (size: number) => {
   studentPageParams.value.pageSize = size
+}
+const handleSizeChange2 = (size: number) => {
   addstudentPageParams.value.pageSize = size
 }
-const handleCurrentChange = (currentPage: number) => {
+const handleCurrentChange1 = (currentPage: number) => {
   studentPageParams.value.currentPage = currentPage
-  addstudentPageParams.value.pageSize = currentPage
+}
+const handleCurrentChange2 = (currentPage: number) => {
+  addstudentPageParams.value.currentPage = currentPage
 }
 </script>
 

@@ -16,6 +16,6 @@ export const addAnnouncement = (params: object | undefined) => {
 	return http.post<Announcement.SingleAnnouncement>(PORT1 + `/coursenoticeadd`, params, { headers: { noLoading: true } });
 };
 
-export const deleteAnnouncementsById = (params : object) => {
+export const deleteAnnouncementsById = (params : object | undefined) => {
 	return http.delete<string>(PORT1 + `/coursenotice`, params, { headers: { noLoading: true } });
 };

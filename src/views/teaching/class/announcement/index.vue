@@ -23,10 +23,8 @@
   <!--删除公告的弹出框-->
   <el-dialog v-model="dialogDeleteVisible" title="确认删除" @close="cancelDelete">
     <span>您确定要删除这条公告吗？</span>
-    <template>
-      <el-button @click="cancelDelete">取消</el-button>
-      <el-button type="danger" @click="deleteNotice">确定</el-button>
-    </template>
+    <el-button @click="cancelDelete">取消</el-button>
+    <el-button type="danger" @click="deleteNotice">确定</el-button>
   </el-dialog>
 
   <!--新增公告的弹出框-->
@@ -36,17 +34,21 @@
         <el-input v-model="addNoticeForm.noticeTitle" />
       </el-form-item>
       <el-form-item label="发布时间" prop="publishTime">
-        <el-date-picker v-model="addNoticeForm.publishTime" type="date" placeholder="选择日期" value-format="yyyy-MM-d" />
+        <el-date-picker v-model="addNoticeForm.publishTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD" />
       </el-form-item>
       <el-form-item label="课程序号" prop="courseId">
         <el-input v-model="addNoticeForm.courseId" disabled />
       </el-form-item>
       <el-form-item label="公告内容" prop="content">
-        <!-- 富文本输入公告内容
-        <div id="editor-container">
-          <Editor v-model="addNoticeForm.content" />
-        </div> -->
-        <el-input type="textarea" v-model="addNoticeForm.content" :rows="10" />
+        <!-- 富文本输入公告内容 -->
+        <div :class="['editor-box', disabled ? 'editor-disabled' : '']">
+          <Toolbar class="editor-toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode"
+            v-if="!hideToolBar" />
+          <Editor :style="{ height }" class="editor-content'" v-model="addNoticeForm.content"
+            :defaultConfig="editorConfig" :mode="mode" @on-created="handleCreated" @on-blur="handleBlur" />
+        </div>
+        <!-- <el-input type="textarea" v-model="addNoticeForm.content" :rows="10" /> -->
       </el-form-item>
     </el-form>
     <el-button type="primary" @click="onSubmit">确认</el-button>
@@ -60,8 +62,8 @@
         <el-input v-model="addNoticeForm.noticeTitle" />
       </el-form-item>
       <el-form-item label="发布时间" prop="publishTime">
-        <el-date-picker v-model="addNoticeForm.publishTime" type="date" placeholder="选择日期" value-format="yyyy-MM-d"
-          :picker-options="{ firstDayOfWeek: 1 }" />
+        <el-date-picker v-model="addNoticeForm.publishTime" type="date" placeholder="选择日期" value-format="YYYY-MM-DD"
+          format="YYYY-MM-DD" :picker-options="{ firstDayOfWeek: 1 }" />
       </el-form-item>
       <el-form-item label="课程序号" prop="courseId">
         <el-input v-model="addNoticeForm.courseId" disabled />
@@ -70,11 +72,13 @@
         <el-input v-model="addNoticeForm.noticeId" disabled />
       </el-form-item>
       <el-form-item label="公告内容" prop="content">
-        <!-- 富文本输入公告内容
-        <div id="editor-container">
-          <Editor v-model="addNoticeForm.content" />
-        </div> -->
-        <el-input type="textarea" v-model="addNoticeForm.content" :rows="10" />
+        <!-- 富文本输入公告内容 -->
+        <div :class="['editor-box', disabled ? 'editor-disabled' : '']">
+          <Toolbar class="editor-toolbar" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode"
+            v-if="!hideToolBar" />
+          <Editor :style="{ height }" class="editor-content'" v-model="addNoticeForm.content"
+            :defaultConfig="editorConfig" :mode="mode" @on-created="handleCreated" @on-blur="handleBlur" />
+        </div>
       </el-form-item>
     </el-form>
     <el-button type="primary" @click="onSubmit">确认</el-button>
@@ -85,20 +89,23 @@
 <script setup lang="ts" name="announcement">
 /* eslint-disable */
 import { ref, reactive, onMounted, watch } from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules, dayjs } from 'element-plus'
 import type { UploadInstance } from 'element-plus'
 import { Announcement } from '@/api/interface'
 import { getAnnouncementsByCourseId, addAnnouncement, deleteAnnouncementsById } from "@/api/modules/Announcement"
-import { ElMessage, ElForm, ElFormItem} from 'element-plus'
-import Editor from '@wangeditor/editor'
+import { ElMessage, ElForm, ElFormItem } from 'element-plus'
 
-const courseId = 42041301
+const router = useRouter();
+const routerName = router.currentRoute.value.name!.valueOf();
+const courseId = (routerName as string)!.split('-')[0]
 const deleteNoticeId = ref(0)
 const dialogTableVisible = ref(false)
 const dialogDeleteVisible = ref(false)
 const dialogModifyVisible = ref(false)
 const showList = ref<Announcement.SingleAnnouncement[]>()
-const addNoticeForm = ref({ noticeId: 0, courseId: courseId, noticeTitle: '', publishTime: new Date(), content: '' })
+const addNoticeForm = ref({ noticeId: 0, courseId: courseId, noticeTitle: '', publishTime: '', content: '' })
+addNoticeForm.value.publishTime = dayjs().format('YYYY-MM-DD')
+console.log(addNoticeForm.value.publishTime)
 
 const upload = ref<UploadInstance>()
 
@@ -118,6 +125,7 @@ const courseRules = reactive<FormRules>({
 
 onMounted(() => {
   let noticeList = []
+  console.log(courseId)
   //向后端拿到该教师的课程列表
   getAnnouncementsByCourseId({ 'courseId': courseId })
     .then(res => {
@@ -139,12 +147,13 @@ const clickAddNotice = () => {
 //点击修改课程按钮
 const clickeditNotice = (row: {
   noticeId: number; courseId: number
-  title: string; time: Date; content: string
+  title: string; time: string; content: string
 }) => {
   dialogModifyVisible.value = true
   addNoticeForm.value.noticeId = row.noticeId
   addNoticeForm.value.courseId = courseId
   addNoticeForm.value.content = row.content
+  console.log(addNoticeForm.value.content)
   addNoticeForm.value.noticeTitle = row.title
   addNoticeForm.value.publishTime = row.time
 }
@@ -160,7 +169,7 @@ const cancelDelete = () => {
 }
 //确认删除
 const deleteNotice = () => {
-  deleteAnnouncementsById(deleteNoticeId)
+  deleteAnnouncementsById({ 'noticeId': deleteNoticeId.value })
     .then((res: any) => {
       console.log(res)
       ElMessage({
@@ -196,9 +205,9 @@ const onSubmit = () => {
   let params = ref<Announcement.SingleAnnouncement>({
     // courseId: 0,
     courseId: (addNoticeForm.value.courseId).toString(),
-    noticeId: (0).toString(),
+    noticeId: (addNoticeForm.value.noticeId).toString(),
     noticeTitle: addNoticeForm.value.noticeTitle,
-    publishTime: new Date(addNoticeForm.value.publishTime).toLocaleDateString(),
+    publishTime: addNoticeForm.value.publishTime,
     content: addNoticeForm.value.content
   })
 
@@ -222,7 +231,7 @@ const onSubmit = () => {
     .then((res: any) => {
       console.log(res)
       ElMessage({
-        message: '新增公告成功！',
+        message: '成功！',
         type: 'success',
       })
 
@@ -249,5 +258,135 @@ const onSubmit = () => {
 const onCancel = () => {
   dialogTableVisible.value = false
 }
+
+import { nextTick, computed, shallowRef, onBeforeUnmount } from "vue";
+import { IToolbarConfig, IEditorConfig } from "@wangeditor/editor";
+import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import { uploadImg, uploadVideo } from "@/api/modules/upload";
+import "@wangeditor/editor/dist/css/style.css";
+import { useRouter } from 'vue-router'
+
+// 富文本 DOM 元素
+const editorRef = shallowRef();
+
+// 实列化编辑器
+const handleCreated = (editor: any) => {
+  editorRef.value = editor;
+};
+
+// 接收父组件参数，并设置默认值
+interface RichEditorProps {
+  value: string; // 富文本值 ==> 必传
+  toolbarConfig?: Partial<IToolbarConfig>; // 工具栏配置 ==> 非必传（默认为空）
+  editorConfig?: Partial<IEditorConfig>; // 编辑器配置 ==> 非必传（默认为空）
+  height?: string; // 富文本高度 ==> 非必传（默认为 500px）
+  mode?: "default" | "simple"; // 富文本模式 ==> 非必传（默认为 default）
+  hideToolBar?: boolean; // 是否隐藏工具栏 ==> 非必传（默认为false）
+  disabled?: boolean; // 是否禁用编辑器 ==> 非必传（默认为false）
+}
+const props = withDefaults(defineProps<RichEditorProps>(), {
+  toolbarConfig: () => {
+    return {
+      excludeKeys: []
+    };
+  },
+  editorConfig: () => {
+    return {
+      placeholder: "请输入内容...",
+      MENU_CONF: {}
+    };
+  },
+  height: "500px",
+  mode: "default",
+  hideToolBar: false,
+  disabled: false
+});
+
+// 判断当前富文本编辑器是否禁用
+if (props.disabled) nextTick(() => editorRef.value.disable());
+
+// 富文本的内容监听，触发父组件改变，实现双向数据绑定
+type EmitProps = {
+  (e: "update:value", val: string): void;
+  (e: "check-validate"): void;
+};
+const emit = defineEmits<EmitProps>();
+const valueHtml = computed({
+  get() {
+    return props.value;
+  },
+  set(val: string) {
+    // 防止富文本内容为空时，校验失败
+    if (editorRef.value.isEmpty()) val = "";
+    emit("update:value", val);
+  }
+});
+
+/**
+ * @description 图片自定义上传
+ * @param file 上传的文件
+ * @param insertFn 上传成功后的回调函数（插入到富文本编辑器中）
+ * */
+type InsertFnTypeImg = (url: string, alt?: string, href?: string) => void;
+props.editorConfig.MENU_CONF!["uploadImage"] = {
+  async customUpload(file: File, insertFn: InsertFnTypeImg) {
+    if (!uploadImgValidate(file)) return;
+    let formData = new FormData();
+    formData.append("file", file);
+    try {
+      const { data } = await uploadImg(formData);
+      insertFn(data.fileUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
+// 图片上传前判断
+const uploadImgValidate = (file: File): boolean => {
+  console.log(file);
+  return true;
+};
+
+/**
+ * @description 视频自定义上传
+ * @param file 上传的文件
+ * @param insertFn 上传成功后的回调函数（插入到富文本编辑器中）
+ * */
+type InsertFnTypeVideo = (url: string, poster?: string) => void;
+props.editorConfig.MENU_CONF!["uploadVideo"] = {
+  async customUpload(file: File, insertFn: InsertFnTypeVideo) {
+    if (!uploadVideoValidate(file)) return;
+    let formData = new FormData();
+    formData.append("file", file);
+    try {
+      const { data } = await uploadVideo(formData);
+      insertFn(data.fileUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
+// 视频上传前判断
+const uploadVideoValidate = (file: File): boolean => {
+  console.log(file);
+  return true;
+};
+
+// 编辑框失去焦点时触发
+const handleBlur = () => {
+  emit("check-validate");
+};
+
+// 组件销毁时，也及时销毁编辑器
+onBeforeUnmount(() => {
+  if (!editorRef.value) return;
+  editorRef.value.destroy();
+});
+
+defineExpose({
+  editor: editorRef
+});
 
 </script>
