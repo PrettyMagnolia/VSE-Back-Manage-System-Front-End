@@ -53,6 +53,7 @@ import { ref, onMounted } from 'vue'
 import { CourseManagement } from '@/api/interface'
 import { getstudentsByCourseId, addStudent, getFreeStudent, deleteStudent } from "@/api/modules/student"
 import { useRouter } from 'vue-router';
+import { ElMessage } from 'element-plus';
 
 const router = useRouter();
 const routerName = router.currentRoute.value.name!.valueOf();
@@ -96,6 +97,7 @@ const removeStudent = (row: CourseManagement.CourseStudents) => {
   deleteStudent(deleteStudentForm.value)
     .then(res => {
       console.log(res)
+      ElMessage.success('移除学生成功');
       getstudentsByCourseId(courseId.value)
         .then(res => {
           showList.value = res.data
@@ -105,6 +107,7 @@ const removeStudent = (row: CourseManagement.CourseStudents) => {
         })
     })
     .catch(err => {
+      ElMessage.success('移除学生失败');
       console.log(err)
     })
 }
