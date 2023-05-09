@@ -16,14 +16,14 @@
     </el-card>
       
     <el-card>
-      <el-table :data="showList" stripe style="width: 100%; min-height: 350px">
+      <el-table :data="showList.slice((currentPage - 1) * pageSize, currentPage * pageSize)" stripe style="width: 100%; min-height: 350px">
         <el-table-column prop="experimentId" label="实验序号" width="300" />
         <el-table-column prop="experimentName" label="实验名称"  />
       </el-table>
       <el-pagination
         v-model:current-page="currentPage"
         v-model:page-size="pageSize"
-        :page-sizes="[100, 200, 300, 400]"
+        :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
         :total="showList.length"
         @size-change="handleSizeChange"
@@ -76,9 +76,11 @@
   
   // 分页
   const handleSizeChange = (val: number) => {
+    pageSize.value = val
     console.log(`${val} items per page`)
   }
   const handleCurrentChange = (val: number) => {
+    currentPage.value = val
     console.log(`current page: ${val}`)
   }
   
