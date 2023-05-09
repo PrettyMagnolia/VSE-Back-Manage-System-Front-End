@@ -6,7 +6,7 @@
 </template> -->
 <template>
   <el-card>
-    <el-button type="primary" @click="clickAddNotice">新增公告</el-button>
+    <el-button type="primary" @click="clickAddNotice" style="margin-top:10px margin-bottom:15px">新增公告</el-button>
     <el-table :data="showList" stripe style="width: 100%; min-height: 350px">
       <el-table-column prop="noticeId" label="公告序号" width="220" />
       <el-table-column prop="title" label="公告标题" width="220" />

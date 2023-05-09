@@ -5,13 +5,13 @@
   </div> -->
   <!--显示学生列表-->
   <div>
-    <el-button type="primary" @click="checkStudent()">添加学生</el-button>
+    <el-button type="primary" @click="checkStudent()" style="margin-top:10px margin-bottom:15px">添加学生</el-button>
     <el-table
       :data="showList.slice((studentPageParams.currentPage - 1) * studentPageParams.pageSize, studentPageParams.currentPage * studentPageParams.pageSize)"
-      stripe style="width: 100%; min-height: 350px">
+      stripe style="width: 80%; min-height: 350px">
       <el-table-column prop="school" label="学校" width="100" />
       <el-table-column prop="stuId" label="学号" width="100" />
-      <el-table-column prop="name" label="姓名" width="100" />
+      <el-table-column prop="name" label="姓名" width="250" />
       <el-table-column prop="gender" label="性别" width="100" />
       <el-table-column prop="email" label="邮箱" width="200" />
       <el-table-column fixed="right" label="操作">
