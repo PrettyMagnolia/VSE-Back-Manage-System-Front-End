@@ -160,7 +160,6 @@ export namespace CourseManagement{
 		email: string
 	}
 
-
 }
 //公告模块
 export namespace Announcement{
