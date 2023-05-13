@@ -2,7 +2,7 @@ import { UserInfo } from "@/stores/interface";
 
 // * 请求响应参数(不包含data)
 export interface Result {
-	code: string;
+	code: number;
 	msg: string;
 	success: boolean
 }
@@ -45,6 +45,11 @@ export namespace Login {
 	}
 	export interface ResAuthButtons {
 		[key: string]: string[];
+	}
+	export interface ReqActivate {
+		code: string,
+		password: string,
+		username: string
 	}
 }
 
@@ -124,14 +129,14 @@ export namespace Experiment {
 }
 
 //课程管理模块
-export namespace CourseManagement{
+export namespace CourseManagement {
 	export interface CourseInfo {
 		courseId: number,
 		courseName: string,
 		semester: string,
 		year: number
 	}
-	export interface CourseDetailInfo{
+	export interface CourseDetailInfo {
 		// courseId: number,
 		courseName: string,
 		semester: string,
@@ -139,20 +144,20 @@ export namespace CourseManagement{
 		studentList: ImportedStudent[],
 		teacherList: number[]
 	}
-	export interface StudentBasicInfo{
+	export interface StudentBasicInfo {
 		stuId: number,
 		schoolNumber: number,
 		stuName: string,
 		school: string
 	}
-	export interface ImportedStudent{
+	export interface ImportedStudent {
 		学号: number | string,
 		学校: string,
 		姓名: string,
 		性别: string,
 		邮箱: string
 	}
-	export interface CourseStudents{
+	export interface CourseStudents {
 		stuId: string,
 		school: string,
 		name: string,
@@ -162,23 +167,23 @@ export namespace CourseManagement{
 
 }
 //公告模块
-export namespace Announcement{
-	export interface SingleAnnouncement{
-		courseId:number | string,
+export namespace Announcement {
+	export interface SingleAnnouncement {
+		courseId: number | string,
 		noticeTitle: string,
-		noticeId: number  | string,
-		publishTime:string,
-		content:string
+		noticeId: number | string,
+		publishTime: string,
+		content: string
 	}
 }
 
 //成绩模块
-export namespace Score{
-	export interface SingleExperimentScore{
+export namespace Score {
+	export interface SingleExperimentScore {
 		experimentName: string,
 		score: number
 	}
-	export interface StudentCourseTotalScore{
+	export interface StudentCourseTotalScore {
 		index: number,
 		studentId: number,
 		studentName: string,

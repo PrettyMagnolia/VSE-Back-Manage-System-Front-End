@@ -17,6 +17,11 @@ export const loginApi = (params: Login.ReqLoginForm) => {
 	return http.get<Login.ResLogin>(PORT1 + `/login?${qs.stringify(params, { arrayFormat: "repeat" })}`); // 如果是 get 请求可以携带数组等复杂参数
 };
 
+// * 用户账户激活
+export const activateApi = (params: Login.ReqActivate) => {
+	return http.post<string>(PORT1 + `/activate`, params, { headers: { noLoading: true } });
+}
+
 // * 获取用户信息
 export const getUserInfoApi = () => {
 	return http.get<ResUserInfo>(PORT1 + `/account`, {}, { headers: { noLoading: true } });
