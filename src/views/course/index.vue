@@ -19,14 +19,14 @@
     <el-button type="primary" @click="clickAddCourse">新增课程</el-button>
     <el-table :data="showList" stripe style="width: 100%; min-height: 350px">
       <el-table-column prop="courseId" label="课程序号" width="220" />
-      <el-table-column prop="courseName" label="课程名称" width="220" />
-      <el-table-column prop="year" label="开课学年" width="220" />
-      <el-table-column prop="semester" label="开课学期" width="220" />
-      <el-table-column fixed="right" label="操作">
+      <el-table-column prop="courseName" label="课程名称" width="350" />
+      <el-table-column prop="year" label="开课学年" width="250" />
+      <el-table-column prop="semester" label="开课学期" />
+      <!-- <el-table-column fixed="right" label="操作">
         <template #default="scope">
           <el-button link type="primary" @click="viewStudents(scope.row)">查看学生</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <!-- <el-pagination
       v-model:current-page="currentPage"
@@ -276,14 +276,13 @@ const viewStudents = (e: CourseManagement.CourseInfo) => {
 
   let courseId: string = e.courseId.toString()
   //根据该课程的courseId，去后端拿到这个课程的所有学生
-  getCourseStudents(courseId)
-    .then(res => {
-      console.log('该班级的学生列表：', res)
-      studentList.value = res.data
-    })
-    .catch(err => {
-      console.log(err)
-    })
+  // getCourseStudents(courseId)
+  //   .then(res => {
+  //     console.log('该班级的学生列表：', res)
+  //   })
+  //   .catch(err => {
+  //     console.log(err)
+  //   })
 
 }
 
