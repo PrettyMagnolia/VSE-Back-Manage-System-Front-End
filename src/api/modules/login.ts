@@ -47,3 +47,8 @@ export const logoutApi = () => {
 	// return http.post(PORT1 + `/logout`);
 	return Promise.resolve();
 };
+
+// * 用户修改密码
+export const changePasswordApi = (password: string) => {
+	return http.post<string>(PORT1 + `/change-password?password=${password}`, { }, {});
+}

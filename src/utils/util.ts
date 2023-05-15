@@ -326,3 +326,34 @@ export function currentTimeState(
 	if (nowTimetamp > endTimetamp) return 1;
 	return 0;
 }
+
+/**
+ * 密码校验
+ * @param password 密码
+ * @returns {boolean} 校验结果
+ */ 
+export const validatePassword = (password: string) => {
+	// 密码至少包含一个小写字母
+	let lowercaseRegex = /[a-z]/;
+	// 密码至少包含一个大写字母
+	let uppercaseRegex = /[A-Z]/;
+	// 密码至少包含一个数字
+	let digitRegex = /\d/;
+	// 密码至少包含一个特殊字符
+	// let specialCharRegex = /[!@#$%^&*()\-_=+{};:,<.>]/;
+	// 密码长度至少为6个字符
+	let lengthRegex = /^.{6,}$/;
+
+	// 逐个验证密码的各个条件
+	let isLowercaseValid = lowercaseRegex.test(password);
+	let isUppercaseValid = uppercaseRegex.test(password);
+	let isDigitValid = digitRegex.test(password);
+	// let isSpecialCharValid = specialCharRegex.test(password);
+	let isLengthValid = lengthRegex.test(password);
+
+	// 检查所有条件是否都满足
+	if (isLowercaseValid && isUppercaseValid && isDigitValid && isLengthValid) {
+		return true; // 密码验证通过
+	}
+	return false; // 密码验证失败
+}

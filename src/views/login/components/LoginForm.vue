@@ -91,6 +91,7 @@ import { initDynamicRouter } from "@/routers/modules/dynamicRouter";
 import { CircleClose, UserFilled } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
 import { getSchoolNameList } from "@/api/modules/review";
+import { validatePassword } from "@/utils/util";
 
 const router = useRouter();
 const tabsStore = TabsStore();
@@ -137,32 +138,6 @@ const validatePass = (rule: any, value: any, callback: any) => {
 		}
 		callback()
 	}
-}
-
-const validatePassword = (password: string) => {
-	// 密码至少包含一个小写字母
-	let lowercaseRegex = /[a-z]/;
-	// 密码至少包含一个大写字母
-	let uppercaseRegex = /[A-Z]/;
-	// 密码至少包含一个数字
-	let digitRegex = /\d/;
-	// 密码至少包含一个特殊字符
-	// let specialCharRegex = /[!@#$%^&*()\-_=+{};:,<.>]/;
-	// 密码长度至少为6个字符
-	let lengthRegex = /^.{6,}$/;
-
-	// 逐个验证密码的各个条件
-	let isLowercaseValid = lowercaseRegex.test(password);
-	let isUppercaseValid = uppercaseRegex.test(password);
-	let isDigitValid = digitRegex.test(password);
-	// let isSpecialCharValid = specialCharRegex.test(password);
-	let isLengthValid = lengthRegex.test(password);
-
-	// 检查所有条件是否都满足
-	if (isLowercaseValid && isUppercaseValid && isDigitValid && isLengthValid) {
-		return true; // 密码验证通过
-	}
-	return false; // 密码验证失败
 }
 
 const validatePass2 = (rule: any, value: any, callback: any) => {
