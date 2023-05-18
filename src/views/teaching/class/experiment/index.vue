@@ -2,7 +2,7 @@
 <template>
   <el-card>
     <el-button type="primary" @click="clickAddExperiment()" style="margin-bottom: 20px;">添加新实验</el-button>
-    <el-table :data="experimentList" stripe style="width: 100%; min-height: 440px">
+    <el-table :data="showExperimentList" stripe style="width: 100%; min-height: 440px">
       <el-table-column prop="experimentId" label="实验序号" width="150" />
       <el-table-column prop="experimentName" label="实验名称" width="400" />
       <el-table-column prop="startTime" label="开始时间" width="200" />
@@ -52,10 +52,7 @@
     <el-pagination
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
-      :page-sizes="[100, 200, 300, 400]"
-      :small="small"
-      :disabled="disabled"
-      :background="background"
+      :page-sizes="[10, 20, 50, 100]"
       layout="total, sizes, prev, pager, next, jumper"
       :total="experimentList.length"
       @size-change="handleSizeChange"
@@ -172,6 +169,7 @@ import { ElMessage, ElTable } from 'element-plus'
 
 const regex = /teaching\/(\d+)/;
 const experimentList = ref<Experiment.CourseExperimentList[]>([]);
+const showExperimentList = ref<Experiment.CourseExperimentList[]>([]);
 
 const addExperimentList = ref<Experiment.ExperimentList[]>([]);
 
@@ -254,6 +252,7 @@ if (match) {
       e.startTime = dateFormat(e.startTime);
       e.endTime = dateFormat(e.endTime);
     });
+    showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
   })
 }
 
@@ -457,6 +456,16 @@ const confirmUpload = () => {
     })
   }
   
+}
+
+const handleSizeChange = (val: number) => {
+  console.log(`${val} items per page`);
+  showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
+
+}
+const handleCurrentChange = (val: number) => {
+  console.log(`current page: ${val}`);
+  showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
 }
 
 </script>
