@@ -3,11 +3,11 @@
   <el-card>
     <el-button type="primary" @click="clickAddExperiment()" style="margin-bottom: 20px;">添加新实验</el-button>
     <el-table :data="showExperimentList" stripe style="width: 100%; min-height: 440px">
-      <el-table-column prop="experimentId" label="实验序号" width="150" />
-      <el-table-column prop="experimentName" label="实验名称" width="400" />
+      <el-table-column prop="experimentId" label="实验序号" width="90" />
+      <el-table-column prop="experimentName" label="实验名称" width="300" />
       <el-table-column prop="startTime" label="开始时间" width="200" />
       <el-table-column prop="endTime" label="结束时间" width="200" />
-      <el-table-column prop="score" label="实验分值" width="120" />  
+      <el-table-column prop="score" label="实验分值" width="90" />  
       <el-table-column label="实验指导书" width="200">
         <el-table-column prop="状态" label="状态" width="90">
           <template #default="scope">
@@ -308,6 +308,7 @@ const clickConfirmDeleteExperiment = () => {
           e.startTime = dateFormat(e.startTime);
           e.endTime = dateFormat(e.endTime);
         });
+      showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
       })
     })
   }
@@ -344,6 +345,7 @@ const clickConfirmModifyExperiment = () => {
           e.endTime = dateFormat(e.endTime);
         });
         modifyDialogVisible.value = false;
+      showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
       })
     })
   }
@@ -363,9 +365,10 @@ const clickConfirmAddExperiment = () => {
           e.startTime = dateFormat(e.startTime);
           e.endTime = dateFormat(e.endTime);
         });
-        modifyDialogVisible.value = false;
+        addDialogVisible.value = false;
+        showExperimentList.value = experimentList.value.slice(0 + pageSize.value * (currentPage.value - 1), pageSize.value + pageSize.value * (currentPage.value - 1));
       })
-      addDialogVisible.value = false;
+      
     })
   }
 }
