@@ -25,7 +25,7 @@
           </template>
         </el-table-column>
       </el-table-column>
-      <el-table-column label="实验报告模板">
+      <!-- <el-table-column label="实验报告模板">
         <el-table-column prop="状态" label="状态" width="90">
           <template #default="scope">
             <el-tag v-if="scope.row.template != null">已上传</el-tag>
@@ -41,7 +41,7 @@
             <el-button v-else size="small" type="danger" @click="clickModifyTemplate(scope.$index, scope.row)">上传</el-button>
           </template>
         </el-table-column>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="score" label="操作" fixed="right" width="120">
         <template #default="scope">
           <el-button link type="primary" size="small" @click="clickDeleteExperiment(scope.$index, scope.row)">删除</el-button>
@@ -386,18 +386,18 @@ const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) =>
   dialogTableVisible.value = true;
 }
 
-const clickViewTemplate = (index: number, row: Experiment.CourseExperimentList) => {
-  console.log("查看实验报告模板", index, row)
-  window.open(row.template, '_blank')
-}
+// const clickViewTemplate = (index: number, row: Experiment.CourseExperimentList) => {
+//   console.log("查看实验报告模板", index, row)
+//   window.open(row.template, '_blank')
+// }
 
-const clickModifyTemplate = (index: number, row: Experiment.ExperimentList) => {
-  console.log("修改实验报告模板", index, row)
-  currentExperimentId.value = row.experimentId;
-  currentType.value = "模板";
-  dialogTitle.value = row.experimentName + "  实验报告模板"
-  dialogTableVisible.value = true;
-}
+// const clickModifyTemplate = (index: number, row: Experiment.ExperimentList) => {
+//   console.log("修改实验报告模板", index, row)
+//   currentExperimentId.value = row.experimentId;
+//   currentType.value = "模板";
+//   dialogTitle.value = row.experimentName + "  实验报告模板"
+//   dialogTableVisible.value = true;
+// }
 
 // const clickCnacelAddExperiment = () => {
 //   dialogTableVisible.value = false;
