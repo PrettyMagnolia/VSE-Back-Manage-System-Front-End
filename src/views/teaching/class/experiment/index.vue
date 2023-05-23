@@ -142,6 +142,7 @@
       :on-change="onUploadChange"
       :on-remove="handleRemove"
       :file-list="fileList"
+      :limit="1"
     >
       <el-icon class="el-icon--upload"><upload-filled /></el-icon>
       <div class="el-upload__text">
@@ -149,7 +150,7 @@
       </div>
       <template #tip>
         <div class="el-upload__tip">
-          仅支持上传单个文件，格式为pdf/word  
+          仅支持上传单个文件，格式为pdf，大小不能超过10MB
         </div>
       </template>
     </el-upload>
@@ -404,7 +405,17 @@ const clickModifyInstructor = (index: number, row: Experiment.ExperimentList) =>
 //   fileList.value.pop();
 // }
 
-const onUploadChange = (file: File) => {
+const onUploadChange = (file: File, fl) => {
+  if (file.raw.type != "application/pdf") {
+    ElMessage.error("只能上传pdf格式的文件");
+    fl.pop();
+    return;
+  }
+  if (file.size > 10485760) {
+    ElMessage.error("文件的大小应小于10MB");
+    fl.pop();
+    return;
+  }
   console.log("添加文件");
   fileList.value.push(file);
   console.log(fileList);
