@@ -251,6 +251,7 @@ onMounted(() => {
   //向后端拿到该教师的课程列表
   getCoursesByTeacher({ 'index': index })
     .then(res => {
+      console.log(res)
       courseList = res.data
       courseList.forEach(item => {
         if (item.semester == 'spring') {
@@ -377,9 +378,10 @@ const checkStudentList = () => {
   for (let i = 0; i < studentList.value.length; i++) {
     if (studentList.value[i]['学号'] == null || studentList.value[i]['学号'] == '' ||
       studentList.value[i]['姓名'] == null || studentList.value[i]['姓名'] == '' ||
-      studentList.value[i]['学校'] == null || studentList.value[i]['学校'] == '') {
+      studentList.value[i]['学校'] == null || studentList.value[i]['学校'] == '' ||
+      studentList.value[i]['邮箱'] == null || studentList.value[i]['邮箱'] == '') {
       ElMessage({
-        message: '每个学生的学校、学号、姓名信息不能缺失，请检查后重新提交！',
+        message: '每个学生的学校、学号、姓名、邮箱信息不能缺失，请检查后重新提交！',
         type: 'warning'
       })
       return false
