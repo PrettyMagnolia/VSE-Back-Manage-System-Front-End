@@ -118,22 +118,22 @@
   <!--管理学生的弹出框-->
   <el-dialog v-model="dialogAddStudentVisible" title="添加学生">
     <el-form :model="addStudentForm" :rules="studentRules">
-      <el-form-item prop="school" label="学校">
+      <el-form-item prop="学校" label="学校">
         <el-input v-model="addStudentForm!['学校']" placeholder="请输入学生学校" />
       </el-form-item>
-      <el-form-item prop="id" label="学号">
+      <el-form-item prop="学号" label="学号">
         <el-input v-model="addStudentForm!['学号']" placeholder="请输入学生学号" />
       </el-form-item>
-      <el-form-item prop="name" label="姓名">
+      <el-form-item prop="姓名" label="姓名">
         <el-input v-model="addStudentForm!['姓名']" placeholder="请输入学生姓名" />
       </el-form-item>
-      <el-form-item prop="gender" label="性别">
+      <el-form-item prop="性别" label="性别">
         <el-select v-model="addStudentForm!['性别']" placeholder="请输入学生性别">
           <el-option label="男" value="男" />
           <el-option label="女" value="女" />
         </el-select>
       </el-form-item>
-      <el-form-item prop="email" label="邮箱">
+      <el-form-item prop="邮箱" label="邮箱">
         <el-input v-model="addStudentForm!['邮箱']" placeholder="请输入学生邮箱" />
       </el-form-item>
     </el-form>
@@ -227,15 +227,18 @@ const courseRules = reactive<FormRules>({
 })
 
 const studentRules = reactive<FormRules>({
-  school: [
+  学校: [
     { required: true, message: '请输入学生学校', trigger: 'blur' },
   ],
-  id: [
+  学号: [
     { required: true, message: '请输入学生学号', trigger: 'blur' },
   ],
-  name: [
+  姓名: [
     { required: true, message: '请输入学生姓名', trigger: 'blur' },
-  ]
+  ],
+  邮箱: [
+    { required: true, message: '请输入学生邮箱', trigger: 'blur' },
+  ],
 })
 
 
