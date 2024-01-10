@@ -158,7 +158,8 @@ const activeAccountRules = reactive({
 })
 
 const loading = ref(false);
-const loginForm = reactive<Login.ReqLoginForm>({ username: "", school: "", password: "" });
+const loginForm = reactive<Login.ReqLoginForm>({ username: "", school: "同济大学", password: "" });
+
 const login = (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	formEl.validate(async (valid: any) => {
@@ -168,6 +169,7 @@ const login = (formEl: FormInstance | undefined) => {
 			// 1.执行登录接口
 			const { success, data } = await loginApi({ ...loginForm });
 			console.log(success, data);
+			console.log("调用登录接口成功");
 
 			// 1.1 账户未激活
 			if (success == false) {
@@ -175,28 +177,68 @@ const login = (formEl: FormInstance | undefined) => {
 				isActived.value = false;
 				return;
 			}
+
 			globalStore.setToken(data.token);
 			console.log(data);
 
 			// 1.1.获取用户个人信息
 			const { data: userDetail } = await getUserInfoApi();
 			globalStore.setUserInfo(userDetail.account);
+			console.log(userDetail);
+			console.log("获取用户信息成功");
 
-			// 2.添加动态路由
-			await initDynamicRouter();
+			if(userDetail.role == 1){
+				// 2.添加动态路由
+				await initDynamicRouter();
+				console.log("添加动态路由成功");
 
-			// 3.清空 tabs、keepAlive 保留的数据
-			tabsStore.closeMultipleTab();
-			keepAlive.setKeepAliveName();
+				// 3.清空 tabs、keepAlive 保留的数据
+				tabsStore.closeMultipleTab();
+				keepAlive.setKeepAliveName();
+				console.log("清空数据遗留成功");
+				console.log("您是老师")
+				router.push(HOME_URL);
+			  ElNotification({
+				  title: getTimeState(),
+				  message: "欢迎教师登录 虚拟实验教学平台",
+				  type: "success",
+				  duration: 3000
+			  });
+				return;
+			}
+			else if(userDetail.role == 2){
+
+				// 2.添加动态路由
+				//await initDynamicRouter();
+				//console.log("添加动态路由成功");
+
+				// 3.清空 tabs、keepAlive 保留的数据
+				//tabsStore.closeMultipleTab();
+				//keepAlive.setKeepAliveName();
+				//console.log("清空数据遗留成功");
+
+				//责任教师登录
+				console.log("您是责任教师")
+				router.push("/teachingadmin");
+				ElNotification({
+				  title: getTimeState(),
+				  message: "欢迎责任教师登录 虚拟实验教学平台",
+				  type: "success",
+				  duration: 3000
+			  });
+			}
+			else{
+
+			}
 
 			// 4.跳转到首页
-			router.push(HOME_URL);
-			ElNotification({
-				title: getTimeState(),
-				message: "欢迎登录 虚拟实验教学平台",
-				type: "success",
-				duration: 3000
-			});
+			//router.push(HOME_URL);
+			//ElNotification({
+			//	title: getTimeState(),
+			//	message: "欢迎登录 虚拟实验教学平台",
+			//	type: "success",
+			//	duration: 3000
+			//});
 		} finally {
 			loading.value = false;
 		}
@@ -263,4 +305,7 @@ const remoteMethod = async (query: string) => {
 
 <style scoped lang="scss">
 @import "../index.scss";
+.form-group {
+  margin-bottom: 20px;
+}
 </style>

@@ -2,9 +2,11 @@
   <div class="card review-content-main">
     <el-row justify="start" align="middle" class="header">
       <el-col :span="7">
-        <el-select v-model="currentExpId" placeholder="请选择实验项目" value-key="experimentId" @change="changeCurrentExperiment"
+        <el-select
+          v-model="currentExpId" placeholder="请选择实验项目" value-key="experimentId" @change="changeCurrentExperiment"
           style="width:300px;">
-          <el-option v-for="item in experimentList" :key="item.experimentId" :label="item.experimentName"
+          <el-option
+            v-for="item in experimentList" :key="item.experimentId" :label="item.experimentName"
             :value="item.experimentId">
             <span style="float: left">{{ item.experimentName }}</span>
             <span style=" float: right;color: var(--el-text-color-secondary);font-size: 13px;">
@@ -32,7 +34,9 @@
       </el-col>
     </el-row>
     <div style="height: 10px;" />
-    <el-table :data="tableData" v-if="tableData != undefined" :highlight-current-row="true" height="500" class="table"
+
+    <el-table
+      :data="tableData" v-if="tableData != undefined" :highlight-current-row="true" height="500" class="table"
       @row-click="handleRowClick">
       <el-table-column prop="schoolNumber" label="学号" width="100" />
       <el-table-column fixed prop="stuName" label="姓名" width="100" />
@@ -58,7 +62,8 @@
 
           <span v-if="scope.row.stuId == currentRow?.stuId && scope.row.reportId != undefined">
             <el-space wrap>
-              <el-input size="small" type="number" step="0.01" :max="currentExperiment?.score" class="score-input"
+              <el-input
+                size="small" type="number" step="0.01" :max="currentExperiment?.score" class="score-input"
                 v-model="score">
                 {{ scope.row.score }}
               </el-input>
@@ -68,6 +73,7 @@
           <span v-else>
             <el-button size="small" type="success">打分</el-button>
           </span>
+					
         </template>
       </el-table-column>
 
@@ -89,6 +95,7 @@
         </template>
       </el-table-column>
     </el-table>
+		
   </div>
 </template>
 

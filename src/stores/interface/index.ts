@@ -13,7 +13,7 @@ export interface UserInfo{
 	avatar: string,
 	email: string,
 	gender: string,
-	name: string
+	name: string,
 }
 
 /* themeConfigProp */

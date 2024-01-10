@@ -24,7 +24,16 @@ export const staticRouter: RouteRecordRaw[] = [
 		// component: () => import("@/layouts/indexAsync.vue"),
 		redirect: HOME_URL,
 		children: []
-	}
+	},
+	//责任教师
+	{
+		path: '/teachingadmin', 
+		name: 'teachingadmin', 
+		component: () => import('@/views/teachingadmin.vue'),
+		meta: {
+			name: "课程以及人员导入",
+		},
+	},
 ];
 
 /**
